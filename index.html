@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NLP Reviewer: Levels of Language Processing & the NLP Pipeline</title>
+<style>
+:root{--navy:#1f3864;--blue:#2e75b6;--sky:#7db6ee;--light:#eaf1fb;--bg:#f4f6fb;--ink:#1c2430;--mut:#5b6678;--line:#d7deea;--ok:#1b8a4b;--okbg:#e6f6ec;--bad:#c0392b;--badbg:#fdecea;--side:300px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:16px}
+#side{width:var(--side);background:var(--navy);color:#fff;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:30;padding-bottom:30px;transition:transform .25s}
+.brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.16)}
+.brand h2{margin:0;font-size:17px;line-height:1.3}
+.brand p{margin:6px 0 0;font-size:12px;opacity:.75}
+.grp{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;padding:18px 20px 6px}
+#side a{display:block;color:#e6edf8;text-decoration:none;padding:8px 20px 8px 22px;font-size:14px;border-left:4px solid transparent}
+#side a:hover{background:rgba(255,255,255,.08)}
+#side a.active{background:rgba(255,255,255,.15);border-left-color:var(--sky);color:#fff;font-weight:600}
+#side a.visited:not(.quizlink)::after{content:"✓";float:right;opacity:.6}
+#side a.quizlink{margin:10px 14px 0;border-radius:8px;border:1px solid var(--sky);background:rgba(125,182,238,.15);font-weight:600;text-align:center;padding:10px}
+#side a.quizlink.active{background:var(--sky);color:var(--navy)}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:var(--navy);color:#fff;align-items:center;gap:12px;padding:0 14px;z-index:25;font-weight:600}
+.topbar button{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:6px;font-size:20px;width:40px;height:36px;cursor:pointer}
+main{margin-left:var(--side);padding:36px 48px 70px;max-width:calc(var(--side) + 960px)}
+.panel{display:none;animation:fade .25s}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.phead{margin-bottom:22px;padding-bottom:14px;border-bottom:3px solid var(--blue)}
+.eyebrow{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:700}
+.phead h1{margin:4px 0 0;font-size:30px;color:var(--navy);line-height:1.25}
+h3{color:var(--blue);margin:28px 0 8px;font-size:19px}
+p{margin:0 0 12px}
+strong{color:#111b2b}
+.hero{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:14px;padding:34px 32px;margin-bottom:26px}
+.hero h1{margin:0 0 8px;font-size:32px;line-height:1.2}
+.hero p{margin:0;opacity:.9}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0 26px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px}
+.card b{display:block;color:var(--navy);margin-bottom:4px}
+.card span{color:var(--mut);font-size:14px}
+ul{padding-left:22px;margin:0 0 14px}
+li{margin:4px 0}
+ul.concept{list-style:none;padding:0}
+li.lab{background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:10px 14px;margin:8px 0}
+li.lab>strong:first-child{color:var(--blue);display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+li.lab.l-example{border-left-color:#8e6bd1}li.lab.l-example>strong:first-child{color:#8e6bd1}
+li.lab.l-application{border-left-color:var(--ok)}li.lab.l-application>strong:first-child{color:var(--ok)}
+li.lab.l-watch-out,li.lab.l-why-it-matters,li.lab.l-considerations,li.lab.l-practices{border-left-color:#d98a00}
+li.lab.l-watch-out>strong:first-child,li.lab.l-why-it-matters>strong:first-child,li.lab.l-considerations>strong:first-child,li.lab.l-practices>strong:first-child{color:#b36f00}
+.callout{background:var(--light);border-left:5px solid var(--blue);border-radius:6px;padding:12px 16px;margin:16px 0}
+pre.mono{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:Consolas,"Courier New",monospace;font-size:14px;overflow-x:auto}
+.small{font-size:13.5px;color:var(--mut)}
+.tw{overflow-x:auto;margin:12px 0 20px;border-radius:8px;border:1px solid var(--line);background:#fff}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#f6f8fc}
+td:first-child{font-weight:600;color:var(--navy)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:18px;border-top:1px solid var(--line)}
+.pager a{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 16px;text-decoration:none;color:var(--navy);font-weight:600;font-size:14px}
+.pager a:hover{border-color:var(--blue);background:var(--light)}
+/* quiz */
+.qbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px}
+.qmeta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--mut);margin-bottom:8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--light);color:var(--blue);font-weight:700;font-size:12px}
+.bar{height:8px;background:#e3e9f4;border-radius:99px;overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.qtext{font-size:18px;font-weight:600;margin:0 0 16px;color:var(--navy)}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--blue);background:var(--light)}
+.opt .k{flex:none;width:26px;height:26px;border-radius:50%;background:var(--light);color:var(--blue);font-weight:700;font-size:13px;display:grid;place-items:center}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+ol.drag{list-style:none;padding:0;margin:0;display:grid;gap:8px;counter-reset:n}
+ol.drag li{counter-increment:n;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;cursor:grab;margin:0}
+ol.drag li::before{content:counter(n);flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+ol.drag li .g{color:var(--mut);font-size:18px;user-select:none}
+ol.drag li .t{flex:1}
+ol.drag li.dragging{opacity:.4;border-style:dashed}
+ol.drag li.good{border-color:var(--ok);background:var(--okbg)}
+ol.drag li.bad{border-color:var(--bad);background:var(--badbg)}
+ol.drag.locked li{cursor:default}
+.mv{display:flex;flex-direction:column;gap:2px}
+.mv button{border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;font-size:11px;line-height:1;padding:3px 7px;color:var(--navy)}
+.mv button:hover{background:var(--light)}
+.hint{font-size:13px;color:var(--mut);margin:0 0 10px}
+.fb{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:15px}
+.fb.ok{background:var(--okbg);border-left:5px solid var(--ok)}
+.fb.no{background:var(--badbg);border-left:5px solid var(--bad)}
+.btn{display:inline-block;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:11px 22px;font:inherit;font-weight:600;cursor:pointer;margin-top:16px}
+.btn:hover{background:var(--navy)}
+.btn.alt{background:#fff;color:var(--navy);border:1px solid var(--line);margin-left:8px}
+.score{font-size:54px;font-weight:800;color:var(--navy);line-height:1}
+.miss{border-top:1px solid var(--line);padding:12px 0}
+.miss small{color:var(--mut)}
+@media(max-width:900px){
+ #side{transform:translateX(-100%)}
+ #side.open{transform:none;box-shadow:0 0 30px rgba(0,0,0,.4)}
+ .topbar{display:flex}
+ main{margin-left:0;padding:76px 16px 50px}
+ .phead h1{font-size:24px}.hero h1{font-size:25px}
+}
+@media print{
+ #side,.topbar,.pager,#quiz{display:none!important}
+ main{margin:0;padding:0;max-width:none}
+ .panel{display:block!important;page-break-before:always}
+ body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="burger" aria-label="Open menu">☰</button><span>NLP Reviewer</span></div>
+<aside id="side">
+ <div class="brand"><h2>NLP Reviewer</h2><p>Levels of Language Processing &amp; the NLP Pipeline</p></div>
+ <nav id="nav"><div class="grp">Introduction</div><a href="#home">Introduction</a><div class="grp">Part 1 · Levels of Language Processing</div><a href="#levels-overview">Overview of the 7 Levels</a><a href="#lvl-1">1. Phonological</a><a href="#lvl-2">2. Morphological</a><a href="#lvl-3">3. Lexical</a><a href="#lvl-4">4. Syntactic</a><a href="#lvl-5">5. Semantic</a><a href="#lvl-6">6. Discourse</a><a href="#lvl-7">7. Pragmatic</a><div class="grp">Part 2 · NLP Pipeline</div><a href="#pipe-overview">Overview of the Pipeline</a><a href="#step-1">1. Data Gathering (Input)</a><a href="#step-2">2. Text Cleaning</a><a href="#step-3">3. Text Preprocessing</a><a href="#step-4">4. Feature Engineering</a><a href="#step-5">5. Modeling</a><a href="#step-6">6. Evaluation</a><a href="#step-7">7. Deployment</a><a href="#step-8">8. Monitoring and Model Updating</a><a href="#example">End-to-End Example</a><div class="grp">Review & Quiz</div><a href="#review">Quick Review Questions</a><a href="#quiz" class="quizlink">★ Final Quiz (50 items)</a></nav>
+</aside>
+<main id="main">
+<section class="panel" id="home"><header class="phead"><span class="eyebrow">Introduction</span><h1>Introduction: What is NLP?</h1></header><div class="hero"><h1>Levels of Language Processing in NLP &amp; the NLP Pipeline</h1><p>Completed and expanded reviewer: definitions, examples, applications, and a 50-item randomized quiz.</p></div>
+<div class="cards"><div class="card"><b>Part 1 · 7 Levels</b><span>Phonological to Pragmatic, with concepts, examples, and applications.</span></div><div class="card"><b>Part 2 · 8 Steps</b><span>From data gathering to monitoring, with challenges and worked examples.</span></div><div class="card"><b>Final Quiz</b><span>100-item bank, 50 random items per attempt: multiple choice and click-and-drag.</span></div></div>
+<p><strong>Natural Language Processing (NLP)</strong> is a field of Artificial Intelligence that enables computers to <strong>understand, interpret, generate, and respond to human language</strong>, in both text and speech. Everyday examples: Google Translate, chatbots, voice assistants (Siri, Alexa), spam filters, autocorrect, and search engines.</p>
+<p>Human language is complex and ambiguous, so NLP breaks it down into <strong>levels</strong>. Each level adds a deeper layer of understanding, from raw sounds and word parts up to the speaker’s real intent. To actually build an NLP system, the work is organized into a step-by-step <strong>pipeline</strong> (Part 2).</p>
+<div class="callout"><strong>Memory aid for the 7 levels (in order):</strong> “<strong>P</strong>ink <strong>M</strong>onkeys <strong>L</strong>ove <strong>S</strong>weet <strong>S</strong>trawberries <strong>D</strong>uring <strong>P</strong>icnics” = <strong>P</strong>honological, <strong>M</strong>orphological, <strong>L</strong>exical, <strong>S</strong>yntactic, <strong>S</strong>emantic, <strong>D</strong>iscourse, <strong>P</strong>ragmatic.</div><div class="pager"></div></section>
+<section class="panel" id="levels-overview"><header class="phead"><span class="eyebrow">Part 1 · Levels of Language Processing</span><h1>Part 1 Overview: The 7 Levels</h1></header><div class="tw"><table><thead><tr><th>Level</th><th>Description</th><th>Example</th><th>Applications</th></tr></thead><tbody><tr><td>Phonological</td><td>Study of speech sounds: how sounds are produced, organized, and pronounced (phonemes, pronunciation, prosody).</td><td>“cat” = /k/ /æ/ /t/</td><td>Speech recognition, text-to-speech, voice assistants</td></tr><tr><td>Morphological</td><td>Study of word structure: how the smallest meaningful parts (morphemes) combine to form words.</td><td>“unhappiness” = un + happy + ness</td><td>Stemming, lemmatization, spell checkers</td></tr><tr><td>Lexical</td><td>Study of individual words: their meanings, categories, and relationships to other words.</td><td>“bank” (money) vs “bank” (river)</td><td>Dictionaries, thesauri, POS tagging, search</td></tr><tr><td>Syntactic</td><td>Study of sentence structure: how words are arranged into phrases and sentences following grammar rules.</td><td>“The cat chased the mouse” (Subject–Verb–Object)</td><td>Grammar checkers, parsing, machine translation</td></tr><tr><td>Semantic</td><td>Study of meaning: what words and sentences mean in context.</td><td>“Jose Rizal was born in Calamba” → PERSON, PLACE</td><td>Question answering, NER, search engines</td></tr><tr><td>Discourse</td><td>Study of how sentences connect to form a coherent paragraph, text, or conversation.</td><td>“Ana is tired. She went to bed.” (She = Ana)</td><td>Summarization, chatbots, coreference</td></tr><tr><td>Pragmatic</td><td>Study of intended meaning in real-world context, beyond the literal words.</td><td>“Can you open the window?” = a request, not a yes/no question</td><td>Virtual assistants, sarcasm detection, dialogue systems</td></tr></tbody></table></div>
+<div class="callout"><strong>Note:</strong> The phonological level applies to <strong>spoken</strong> language. Text-only NLP systems (e.g., a text chatbot) usually start from the morphological level. Some textbooks group the lexical level under semantics; the two are closely related.</div><div class="pager"></div></section>
+<section class="panel" id="lvl-1"><header class="phead"><span class="eyebrow">Part 1 · Level 1 of 7</span><h1>1. Phonological Level</h1></header><p>Deals with the <strong>sound system</strong> of a language. It is the first level for any system that listens to or produces speech.</p>
+<h3>Phonemes</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>smallest unit of sound</strong> in a spoken language that can change the meaning of a word.</li><li class="lab l-example"><strong>Example</strong>“bat” and “pat” differ only by one phoneme (/b/ vs /p/). The word “cat” has three phonemes: /k/ /æ/ /t/. English has about 44 phonemes.</li><li class="lab l-application"><strong>Application</strong>Speech recognition models convert audio into phonemes and then into words; text-to-speech systems do the reverse.</li></ul>
+<h3>Phonetic Transcription</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>A written representation of <strong>how a word is actually pronounced</strong>, usually using the International Phonetic Alphabet (IPA). Needed because English spelling does not always match pronunciation.</li><li class="lab l-example"><strong>Example</strong>“knight” → /naɪt/ (the k and gh are silent). “though” → /ðoʊ/, “through” → /θruː/, “tough” → /tʌf/ (same letters “ough,” three different sounds).</li><li class="lab l-application"><strong>Application</strong>Pronunciation dictionaries, grapheme-to-phoneme conversion in text-to-speech, and language-learning apps.</li></ul>
+<h3>Prosody</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>rhythm, stress, intonation, pitch, and speed</strong> of speech. It carries emotion and sentence type beyond the words themselves.</li><li class="lab l-example"><strong>Example</strong>Rising pitch turns “You’re coming.” into a question: “You’re coming?” Stress changes meaning: “I didn’t steal <strong>the money</strong>” vs “I didn’t <strong>steal</strong> the money.”</li><li class="lab l-application"><strong>Application</strong>Natural-sounding voice assistants, emotion detection in call centers, and detecting questions or sarcasm in speech.</li></ul><div class="pager"></div></section>
+<section class="panel" id="lvl-2"><header class="phead"><span class="eyebrow">Part 1 · Level 2 of 7</span><h1>2. Morphological Level</h1></header><p>Deals with the <strong>internal structure of words</strong>. Knowing how words are built helps a system recognize related words (run, runs, running, runner) as variations of one idea.</p>
+<h3>Morphemes</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>smallest unit of a language that carries meaning or grammatical function</strong>. (Not the same as a syllable.)</li><li class="lab l-example"><strong>Example</strong>“unbreakable” = <strong>un-</strong> (not) + <strong>break</strong> (root) + <strong>-able</strong> (can be). That is 3 morphemes. “dogs” = dog + -s (plural). Types: <strong>free</strong> morphemes can stand alone (book, run); <strong>bound</strong> morphemes cannot (un-, -ed, -s, -ness).</li><li class="lab l-application"><strong>Application</strong>Subword tokenization, stemming, and handling languages with rich word-building such as Filipino (sulat → su<strong>m</strong>ulat, <strong>nag</strong>sulat, <strong>pag</strong>sulat-an) and Korean.</li></ul>
+<h3>Inflection</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Changing a word’s form to show <strong>grammatical information</strong> (tense, number, person, comparison, aspect) <strong>without changing its core meaning or part of speech</strong>. It applies to verbs, nouns, and adjectives, not only verb tense.</li><li class="lab l-example"><strong>Example</strong>walk → walk<strong>ed</strong> (past tense); cat → cat<strong>s</strong> (plural); big → big<strong>ger</strong> (comparison). Filipino: sulat → s<strong>um</strong>ulat (completed aspect).</li><li class="lab l-application"><strong>Application</strong>Lemmatization maps inflected forms back to one dictionary form; search engines match “running” with “run.”</li></ul>
+<h3>Derivation</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Creating a <strong>new word</strong> (often with a new meaning or a new part of speech) by adding <strong>prefixes or suffixes</strong>.</li><li class="lab l-example"><strong>Example</strong>happy (adjective) → happi<strong>ness</strong> (noun); teach (verb) → teach<strong>er</strong> (noun); kind → <strong>un</strong>kind (opposite meaning).</li><li class="lab l-application"><strong>Application</strong>Vocabulary expansion, stemming, and helping machine translation handle unseen words by recognizing their parts.</li></ul>
+<div class="tw"><table><thead><tr><th>Feature</th><th>Inflection</th><th>Derivation</th></tr></thead><tbody><tr><td>Purpose</td><td>Shows grammatical function</td><td>Builds a new word</td></tr><tr><td>Changes part of speech?</td><td>No</td><td>Often yes</td></tr><tr><td>Changes core meaning?</td><td>No</td><td>Usually yes</td></tr><tr><td>Examples</td><td>plays, played, playing</td><td>player, playful, replay</td></tr></tbody></table></div><div class="pager"></div></section>
+<section class="panel" id="lvl-3"><header class="phead"><span class="eyebrow">Part 1 · Level 3 of 7</span><h1>3. Lexical Level</h1></header><p>Deals with <strong>individual words</strong> and the <strong>lexicon</strong> (the vocabulary of a language: each word with its part of speech, meanings, and forms).</p>
+<h3>Lexical Semantics</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The study of the <strong>meaning of individual words</strong> and the <strong>relationships between words</strong>. A single word can have several senses, and different words can share or oppose meanings.</li><li class="lab l-example"><strong>Example</strong>“bank” can mean a financial institution or a river edge. WordNet, a well-known lexical database, groups words into sets of synonyms (synsets).</li><li class="lab l-application"><strong>Application</strong>Search engines expanding queries with synonyms, thesauri, sentiment lexicons (lists of positive/negative words), word embeddings, and part-of-speech (POS) tagging.</li></ul>
+<div class="tw"><table><thead><tr><th>Relation</th><th>Meaning</th><th>Example</th></tr></thead><tbody><tr><td>Synonymy</td><td>Words with similar meaning</td><td>big / large</td></tr><tr><td>Antonymy</td><td>Words with opposite meaning</td><td>hot / cold</td></tr><tr><td>Hypernymy / Hyponymy</td><td>General term (hypernym) and its specific type (hyponym)</td><td>animal → dog</td></tr><tr><td>Meronymy</td><td>Part–whole relationship</td><td>wheel is part of a car</td></tr><tr><td>Polysemy</td><td>One word with several <strong>related</strong> meanings</td><td>“head” of a person / “head” of a company</td></tr><tr><td>Homonymy</td><td>Same spelling/sound, <strong>unrelated</strong> meanings</td><td>“bat” (animal) / “bat” (baseball)</td></tr></tbody></table></div>
+<p><strong>Related task, POS tagging:</strong> labeling each word with its grammatical category. Example: The/DET cat/NOUN sleeps/VERB.</p><div class="pager"></div></section>
+<section class="panel" id="lvl-4"><header class="phead"><span class="eyebrow">Part 1 · Level 4 of 7</span><h1>4. Syntactic Level</h1></header><p>Deals with <strong>sentence structure</strong>: the rules for arranging words into phrases and valid sentences. “The dog bites the man” and “The man bites the dog” have the same words but different structure and meaning.</p>
+<h3>Parsing</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong><strong>Analyzing the grammatical structure</strong> of a sentence and the relationships among its words, producing a parse tree or dependency graph.</li><li class="lab l-example"><strong>Example</strong>“The cat chased the mouse.” is parsed into a subject (The cat), a verb (chased), and an object (the mouse). Syntactic ambiguity: “I saw the man with the telescope” has two valid parses (who has the telescope?).</li><li class="lab l-application"><strong>Application</strong>Grammar checkers (e.g., Grammarly), machine translation, information extraction, and question answering.</li></ul>
+<h3>Subject–Verb–Object (SVO)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>A <strong>basic word-order pattern</strong>: the Subject (who does the action) comes first, then the Verb (the action), then the Object (who or what receives the action). English is mostly SVO; other languages order words differently.</li><li class="lab l-example"><strong>Example</strong>English (SVO): “Maria (S) eats (V) rice (O).” Filipino is typically verb-first: “Kumain (V) si Maria (S) ng kanin (O).” Korean is SOV: 마리아가 (S) 밥을 (O) 먹어요 (V).</li><li class="lab l-application"><strong>Application</strong>Machine translation must reorder words between languages; parsers use word order to identify subject and object.</li></ul>
+<h3>Constituency</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The principle that <strong>groups of words function together as a single grammatical unit</strong> (a constituent, such as a noun phrase or verb phrase) to build the <strong>hierarchical structure</strong> of a sentence. Constituency parsing breaks a sentence into nested phrases.</li><li class="lab l-example"><strong>Example</strong>“The cat chased the mouse” as a bracketed tree:</li><li class="lab l-application"><strong>Application</strong>Syntax-based machine translation, grammar checking, and extracting phrases (e.g., all noun phrases) from text.</li></ul>
+<pre class="mono">[S [NP The cat] [VP [V chased] [NP the mouse]]]</pre>
+<h3>Dependency</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>grammatical relationship between words</strong>, where one word (the <strong>head</strong> or governor) governs or describes another (the <strong>dependent</strong> or modifier). Every word depends on exactly one head, and the main verb is the root.</li><li class="lab l-example"><strong>Example</strong>In “The cat chased the mouse”: <strong>chased</strong> is the root; <strong>cat</strong> → chased (subject); <strong>mouse</strong> → chased (object); each <strong>the</strong> → its noun (determiner).</li><li class="lab l-application"><strong>Application</strong>Relation extraction, sentiment analysis (which adjective describes which noun), and tools like spaCy and Stanford parser.</li></ul>
+<div class="tw"><table><thead><tr><th></th><th>Constituency</th><th>Dependency</th></tr></thead><tbody><tr><td>Focus</td><td>Phrases and how they nest</td><td>Word-to-word head–dependent links</td></tr><tr><td>Output</td><td>Tree with phrase labels (NP, VP, S)</td><td>Tree/graph of labeled relations (subject, object)</td></tr><tr><td>Good for</td><td>Phrase structure, grammar</td><td>Meaning relations, flexible word-order languages</td></tr></tbody></table></div><div class="pager"></div></section>
+<section class="panel" id="lvl-5"><header class="phead"><span class="eyebrow">Part 1 · Level 5 of 7</span><h1>5. Semantic Level</h1></header><p>Deals with <strong>meaning</strong>: determining what words and sentences actually mean, not just how they are built. A sentence can be grammatically perfect but meaningless (“Colorless green ideas sleep furiously”).</p>
+<h3>Word Sense Disambiguation (WSD)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Determining <strong>which meaning of an ambiguous word is intended</strong>, based on its surrounding context. This is how a model “understands” a word through context.</li><li class="lab l-example"><strong>Example</strong>“She deposited the check at the <strong>bank</strong>” (financial institution) vs “They sat by the river <strong>bank</strong>” (shore). “I saw a <strong>bat</strong> fly out of the cave” (animal) vs “He swung the <strong>bat</strong>” (sports).</li><li class="lab l-application"><strong>Application</strong>Machine translation (choosing the correct word in the target language), search relevance, and chatbots. Modern contextual models like BERT do this automatically.</li></ul>
+<h3>Semantic Role Labeling (SRL)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Identifying the <strong>predicate (action)</strong> and its <strong>arguments</strong>, answering “<strong>who did what to whom, when, where, and how</strong>.” Roles include the agent (doer), the patient/theme (receiver), the recipient, time, and place.</li><li class="lab l-example"><strong>Example</strong>“Maria gave Juan a book yesterday.” → Predicate: gave; Agent: Maria; Recipient: Juan; Theme: a book; Time: yesterday. Same roles even in passive form: “A book was given to Juan by Maria.”</li><li class="lab l-application"><strong>Application</strong>Question answering, information extraction, and summarization.</li></ul>
+<h3>Named Entity Recognition (NER)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Finding and classifying <strong>named entities</strong> in text into predefined categories such as <strong>person, organization, location, date, time, money, and percentage</strong>.</li><li class="lab l-example"><strong>Example</strong>“Jose Rizal was born in Calamba, Laguna on June 19, 1861.” → Jose Rizal = PERSON; Calamba, Laguna = LOCATION; June 19, 1861 = DATE. Challenge: “Washington” may be a person, a place, or an organization depending on context.</li><li class="lab l-application"><strong>Application</strong>News tagging, resume parsing, chatbots, search engines, customer-support ticket routing, and building knowledge graphs.</li></ul><div class="pager"></div></section>
+<section class="panel" id="lvl-6"><header class="phead"><span class="eyebrow">Part 1 · Level 6 of 7</span><h1>6. Discourse Level</h1></header><p>Goes <strong>beyond a single sentence</strong>. It studies how sentences relate to one another to form a meaningful paragraph, essay, or conversation. The meaning of a sentence can depend on the sentences before it.</p>
+<h3>Coherence</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>meaning-based flow</strong> of a text. Sentences must make sense together and be logically related (cause–effect, contrast, elaboration, sequence). The second sentence should be connected to the first.</li><li class="lab l-example"><strong>Example</strong>Coherent: “Ana was hungry. She ordered pizza.” Incoherent: “Ana was hungry. The moon orbits the Earth.”</li><li class="lab l-application"><strong>Application</strong>Evaluating essays, text summarization, and generating long text that stays on topic.</li></ul>
+<h3>Cohesion</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The <strong>surface-level linguistic links</strong> that tie sentences together, such as transition words (however, therefore, in addition), pronouns, repetition, and synonyms. Cohesion is the “glue” in the wording; coherence is the logic in the meaning.</li><li class="lab l-example"><strong>Example</strong>“Ana studied hard. <strong>Therefore</strong>, she passed. <strong>However</strong>, <strong>she</strong> did not get the highest score.”</li><li class="lab l-application"><strong>Application</strong>Writing assistants, automated essay scoring, and text generation.</li></ul>
+<h3>Anaphora Resolution</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Determining <strong>which earlier word or phrase (the antecedent) a pronoun or referring expression points back to</strong>. A closely related task, <strong>coreference resolution</strong>, links all mentions of the same entity.</li><li class="lab l-example"><strong>Example</strong>“Maria told Ana that <strong>she</strong> won.” (Who is “she”? ambiguous). “The trophy didn’t fit in the suitcase because <strong>it</strong> was too big.” (it = trophy; if “too small,” it = suitcase).</li><li class="lab l-application"><strong>Application</strong>Summarization, machine translation (pronouns differ by gender and language), multi-turn chatbots, and question answering.</li></ul><div class="pager"></div></section>
+<section class="panel" id="lvl-7"><header class="phead"><span class="eyebrow">Part 1 · Level 7 of 7</span><h1>7. Pragmatic Level</h1></header><p>The highest level. It studies <strong>language in real-world context</strong>: the speaker’s intention, the situation, and shared knowledge. The same words can mean different things in different situations.</p>
+<h3>Speech Acts</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>The idea that <strong>utterances perform actions</strong>, such as requesting, promising, warning, or apologizing, and not only stating facts. (Theory by Austin and Searle.)</li><li class="lab l-example"><strong>Example</strong>“Can you pass the salt?” is a <strong>request</strong>, not a question about ability. “I promise to come” performs a promise.</li><li class="lab l-application"><strong>Application</strong>Intent detection in chatbots (“Book me a flight” → booking intent), voice assistants, and email triage.</li></ul>
+<ul><li><strong>Assertive</strong>: states facts (“It’s raining.”)</li><li><strong>Directive</strong>: gets someone to act (“Close the door.”)</li><li><strong>Commissive</strong>: commits the speaker (“I will help you.”)</li><li><strong>Expressive</strong>: shows feelings (“Thank you!”)</li><li><strong>Declarative</strong>: changes a status (“You’re hired.”)</li></ul>
+<h3>Deixis (Deictic Words)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>“Pointing” words whose meaning <strong>depends on who says them, where, and when</strong>: person (I, you, we), place (here, there, this, that), and time (now, today, tomorrow). They are not the same as prepositions.</li><li class="lab l-example"><strong>Example</strong>“Meet me <strong>here</strong> <strong>tomorrow</strong>.” has no fixed meaning until you know where the speaker is and what today’s date is.</li><li class="lab l-application"><strong>Application</strong>Virtual assistants (“remind me <strong>tomorrow</strong>”), chatbots tracking conversation context, and machine translation.</li></ul>
+<h3>Contextual Understanding</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Interpreting the <strong>intended meaning</strong> of an utterance using the situation, speaker intent, tone, and background (world) knowledge, going beyond the literal words.</li><li class="lab l-example"><strong>Example</strong>“It’s cold in here.” may really mean “Please close the window.” “Great, another Monday!” is usually sarcasm, not joy.</li><li class="lab l-application"><strong>Application</strong>Sarcasm and sentiment detection, customer-support bots, and large language models that handle multi-turn conversations.</li></ul><div class="pager"></div></section>
+<section class="panel" id="pipe-overview"><header class="phead"><span class="eyebrow">Part 2 · NLP Pipeline</span><h1>Part 2 Overview: The NLP Pipeline</h1></header><p>The NLP pipeline is the <strong>step-by-step workflow</strong> for turning raw language data into a working, maintained NLP system.</p>
+<div class="callout"><strong>Flow:</strong> 1 Data Gathering → 2 Text Cleaning → 3 Text Preprocessing → 4 Feature Engineering → 5 Modeling → 6 Evaluation → 7 Deployment → 8 Monitoring &amp; Model Updating (and back to earlier steps when the model needs improvement).</div><div class="pager"></div></section>
+<section class="panel" id="step-1"><header class="phead"><span class="eyebrow">Part 2 · Step 1 of 8</span><h1>1. Data Gathering (Input)</h1></header><p>Collecting <strong>textual data from different sources</strong> that the model will learn from. Sources include websites (web scraping), APIs, social media, surveys, emails, customer reviews, company databases, chat logs, and public datasets (corpora). The data used to train the model determines what it can learn.</p>
+<h3>Challenges in data gathering</h3>
+<div class="tw"><table><thead><tr><th>Challenge</th><th>What it means</th><th>Example</th><th>How to address it</th></tr></thead><tbody><tr><td>Data Quality</td><td><strong>“Garbage in, garbage out.”</strong> If the data is bad, the model output is bad.<br>Problems: (a) incomplete or missing data, (b) inconsistent data format, (c) noise and outliers.</td><td>Reviews with missing ratings; dates written as 05/10/26 and “May 10, 2026.”</td><td>Validate, standardize formats, remove duplicates, and filter outliers.</td></tr><tr><td>Data Privacy &amp; Security</td><td>Protect people’s information. Data should be <strong>encrypted and anonymized</strong>, with personal and identifying information removed, and follow data privacy laws.</td><td>Chat logs that contain names, phone numbers, or addresses.</td><td>Anonymization, encryption, consent, and compliance with laws like the Data Privacy Act of 2012 (RA 10173) in the Philippines and GDPR in the EU.</td></tr><tr><td>Data Accessibility</td><td>Determines <strong>who can access the data</strong>. Access should be limited to authorized people.<br>Issues: high costs and technical barriers.</td><td>Medical or student records restricted to approved staff; paid datasets.</td><td>Role-based access control (RBAC) and the <strong>principle of least privilege</strong> (users get only the access they need).</td></tr><tr><td>Data Volume &amp; Variety</td><td>Big data can be too large to store or process. Data also comes in many forms (text, images, audio, video), and unstructured data is hard to handle.</td><td>Millions of tweets plus product photos and voice recordings.</td><td>Scalable storage and processing, data integration pipelines, and converting unstructured data into usable form.</td></tr><tr><td>Bias &amp; Representativeness</td><td>Data must <strong>fairly represent</strong> the people and situations the model will serve, or the model will be unfair (e.g., demographic or gender bias).</td><td>A model trained mostly on formal English performs poorly on Taglish or regional dialects.</td><td>Collect balanced data, audit for bias, and test across different groups.</td></tr></tbody></table></div><div class="pager"></div></section>
+<section class="panel" id="step-2"><header class="phead"><span class="eyebrow">Part 2 · Step 2 of 8</span><h1>2. Text Cleaning</h1></header><p><strong>Removing noise</strong> from the text, correcting spelling errors, and <strong>normalizing</strong> it so the data is consistent. This includes handling misspellings, slang, and abbreviations.</p>
+<h3>Noise in NLP</h3>
+<p>Noise is any part of the text that does not help the task: <strong>special characters, punctuation marks, numbers, HTML tags, URLs, emojis, and extra spaces</strong>. Removing noise means removing or fixing these. (Be careful: numbers, punctuation, and emojis are sometimes useful, e.g., prices or sentiment, so decide based on the task.)</p>
+<div class="tw"><table><thead><tr><th>Raw text</th><th>Cleaned text</th></tr></thead><tbody><tr><td>Hello! This is an example text with numbers 12345 and symbols $%&amp;</td><td>Hello This is an example text with numbers and symbols</td></tr><tr><td>&lt;p&gt;OMG!!! Visit https://shop.ph NOW&lt;/p&gt;</td><td>OMG Visit NOW</td></tr><tr><td>idk wat 2 do, pls hlp</td><td>I don’t know what to do, please help</td></tr></tbody></table></div>
+<h3>Normalization</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong><strong>Converting text into a standard form</strong> so that different versions of the same thing are treated the same. It involves deciding which version of a word to use.</li><li class="lab l-example"><strong>Example</strong>“gonna” → “going to”; “2moro” → “tomorrow”; “colour” and “color” → one chosen spelling; “U.S.A.” and “USA” → “USA”; Filipino text slang “d2” → “dito.”</li><li class="lab l-why-it-matters"><strong>Why it matters</strong>Without it, the model treats “color” and “colour” as two different words and wastes learning on spelling variations.</li></ul><div class="pager"></div></section>
+<section class="panel" id="step-3"><header class="phead"><span class="eyebrow">Part 2 · Step 3 of 8</span><h1>3. Text Preprocessing</h1></header><p>Preparing the cleaned text so that a model can learn from it efficiently. Benefits:</p>
+<ul><li><strong>Enhances accuracy</strong>: cleaner input leads to better predictions.</li><li><strong>Reduces noise</strong>: removes details that distract the model.</li><li><strong>Facilitates consistency</strong>: similar text is represented in the same way.</li><li><strong>Improves training efficiency</strong>: a smaller, simpler vocabulary trains faster.</li><li><strong>Boosts model quality</strong>: the model learns real patterns, not formatting quirks.</li><li><strong>Mitigates bias</strong>: reduces unintended bias from inconsistent representation (it does not remove bias in the data itself).</li></ul>
+<h3>a. Tokenization (sentence | word)</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Splitting text into smaller pieces called <strong>tokens</strong>: paragraphs into <strong>sentences</strong>, and sentences into <strong>words</strong>. Tokens are later mapped to <strong>numbers</strong> (an ID per word in the vocabulary) so the model can process them.</li><li class="lab l-example"><strong>Example</strong>“NLP is fun. It is useful.” → Sentences: [“NLP is fun.”, “It is useful.”]. Words: [NLP, is, fun, ., It, is, useful, .]</li><li class="lab l-watch-out"><strong>Watch out</strong>Sentence tokenizers stop at periods, but not every period ends a sentence (Dr. Cruz, 3.14, e.g.). Modern models (BERT, GPT) use <strong>subword tokenization</strong> (e.g., “unhappiness” → un + happi + ness).</li></ul>
+<h3>b. Lowercasing</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Converting all text to <strong>lowercase</strong> so “Hello,” “HELLO,” and “hello” are one token.</li><li class="lab l-example"><strong>Example</strong>“The Cat Sat” → “the cat sat”.</li><li class="lab l-watch-out"><strong>Watch out</strong>Case can carry meaning: “Apple” (company) vs “apple” (fruit), “US” vs “us.”</li></ul>
+<h3>c. Stop Word Removal</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Removing very common words that add little meaning, such as articles, prepositions, and auxiliary verbs (<strong>the, is, a, an, of, in, to</strong>).</li><li class="lab l-example"><strong>Example</strong>“The cat is on the mat” → “cat mat”.</li><li class="lab l-watch-out"><strong>Watch out</strong><strong>Meaning can be lost.</strong> “This is <strong>not</strong> good” → “good” flips the sentiment. Often kept for translation, sentiment analysis, and large language models; useful for search and topic modeling.</li></ul>
+<h3>d. Normalization</h3>
+<ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Converting text to a <strong>standard form</strong> and correcting spelling errors, so variants map to one form (expanding contractions, fixing misspellings, removing accents, standardizing numbers and dates).</li><li class="lab l-example"><strong>Example</strong>“can’t” → “cannot”; “recieve” → “receive”; “café” → “cafe”.</li></ul>
+<h3>e. Stemming / Lemmatization</h3>
+<p>Both reduce words to a base form so related words are grouped together.</p>
+<div class="tw"><table><thead><tr><th></th><th>Stemming</th><th>Lemmatization</th></tr></thead><tbody><tr><td>How it works</td><td>Cuts off word endings using fixed rules; <strong>“cuts the word back to its base form.”</strong></td><td>Looks up the <strong>dictionary form (lemma)</strong> using vocabulary and part of speech.</td></tr><tr><td>Output</td><td>May be a <strong>non-word</strong></td><td>Always a <strong>valid word</strong></td></tr><tr><td>Examples</td><td>studies → studi<br>quickly → quickli<br>beautiful → beauti</td><td>studies → study<br>better → good<br>was → be</td></tr><tr><td>Speed / accuracy</td><td>Faster, less accurate</td><td>Slower, more accurate</td></tr><tr><td>Common tools</td><td>Porter and Snowball stemmers</td><td>WordNet lemmatizer, spaCy</td></tr></tbody></table></div>
+<h3>Putting preprocessing together</h3>
+<div class="tw"><table><thead><tr><th>Stage</th><th>Result</th></tr></thead><tbody><tr><td>Original</td><td>The children are running quickly to the beautiful parks!</td></tr><tr><td>Tokenization</td><td>[The, children, are, running, quickly, to, the, beautiful, parks, !]</td></tr><tr><td>Lowercasing</td><td>[the, children, are, running, quickly, to, the, beautiful, parks, !]</td></tr><tr><td>Stop word and punctuation removal</td><td>[children, running, quickly, beautiful, parks]</td></tr><tr><td>Stemming</td><td>[children, run, quickli, beauti, park]</td></tr><tr><td>Lemmatization</td><td>[child, run, quickly, beautiful, park]</td></tr></tbody></table></div><div class="pager"></div></section>
+<section class="panel" id="step-4"><header class="phead"><span class="eyebrow">Part 2 · Step 4 of 8</span><h1>4. Feature Engineering</h1></header><ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Converting the preprocessed text into <strong>numerical features</strong> (vectors) that a machine learning model can understand, since models work with numbers, not words. Also includes creating or selecting useful features.</li></ul>
+<div class="tw"><table><thead><tr><th>Technique</th><th>Idea</th><th>Example</th></tr></thead><tbody><tr><td>Bag of Words (BoW)</td><td>Counts how many times each word appears; ignores word order.</td><td>Vocabulary [I, love, NLP, AI]. “I love NLP” → [1, 1, 1, 0]; “I love AI” → [1, 1, 0, 1]</td></tr><tr><td>TF-IDF</td><td>Weights words by how important they are: frequent in a document but rare across all documents. TF-IDF = TF × log(N / df).</td><td>In movie reviews, “terrible” scores higher than “the.”</td></tr><tr><td>N-grams</td><td>Sequences of n consecutive words, capturing some word order.</td><td>Bigrams of “not very good”: “not very,” “very good.”</td></tr><tr><td>Word embeddings (Word2Vec, GloVe, FastText)</td><td>Dense vectors where similar words are close together.</td><td>king − man + woman ≈ queen</td></tr><tr><td>Contextual embeddings (BERT)</td><td>Word vectors that change with context.</td><td>“bank” gets different vectors in “river bank” and “bank loan.”</td></tr><tr><td>Hand-crafted features</td><td>Features designed by the developer.</td><td>Text length, number of exclamation marks, sentiment score, POS counts</td></tr></tbody></table></div>
+<ul class="concept"><li class="lab l-application"><strong>Application</strong>The better the features, the better the model. Good features are often what separates a weak classifier from a strong one.</li></ul><div class="pager"></div></section>
+<section class="panel" id="step-5"><header class="phead"><span class="eyebrow">Part 2 · Step 5 of 8</span><h1>5. Modeling</h1></header><ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Choosing an algorithm and <strong>training it</strong> on the features so it learns patterns in the data, then tuning it.</li></ul>
+<ul><li><strong>Traditional machine learning:</strong> Naive Bayes, Logistic Regression, Support Vector Machines, Random Forest. Good for smaller datasets and simple tasks like spam detection.</li><li><strong>Deep learning:</strong> RNN, LSTM, CNN for sequences and text classification.</li><li><strong>Transformers:</strong> BERT, GPT, T5. State-of-the-art; often used by <strong>fine-tuning</strong> a pretrained model.</li><li><strong>Good practice:</strong> split data into <strong>training / validation / test</strong> sets (e.g., 70/15/15 or 80/20), tune hyperparameters, and watch for <strong>overfitting</strong> (memorizes training data) and <strong>underfitting</strong> (too simple to learn).</li></ul>
+<ul class="concept"><li class="lab l-example"><strong>Example</strong>Training a Naive Bayes classifier on TF-IDF features to label customer reviews as positive or negative.</li></ul><div class="pager"></div></section>
+<section class="panel" id="step-6"><header class="phead"><span class="eyebrow">Part 2 · Step 6 of 8</span><h1>6. Evaluation</h1></header><p>Measuring how well the model performs on <strong>unseen test data</strong> using specific metrics: <strong>accuracy, precision, recall, and F1-score</strong>.</p>
+<div class="tw"><table><thead><tr><th>Metric</th><th>Formula</th><th>Meaning</th></tr></thead><tbody><tr><td>Accuracy</td><td>(TP + TN) / (TP + TN + FP + FN)</td><td>Overall share of correct predictions.</td></tr><tr><td>Precision</td><td>TP / (TP + FP)</td><td>Of everything predicted positive, how many were truly positive.</td></tr><tr><td>Recall</td><td>TP / (TP + FN)</td><td>Of all truly positive cases, how many the model found.</td></tr><tr><td>F1-score</td><td>2 × (Precision × Recall) / (Precision + Recall)</td><td>Balance of precision and recall; useful when classes are imbalanced.</td></tr></tbody></table></div>
+<p class="small"><em>TP = true positive, TN = true negative, FP = false positive, FN = false negative.</em></p>
+<h3>Worked example (spam detector, 100 emails)</h3>
+<p>TP = 40, FP = 10, FN = 5, TN = 45.</p>
+<ul><li>Accuracy = (40 + 45) / 100 = <strong>0.85 (85%)</strong></li><li>Precision = 40 / (40 + 10) = <strong>0.80</strong></li><li>Recall = 40 / (40 + 5) ≈ <strong>0.89</strong></li><li>F1 = 2 × (0.80 × 0.89) / (0.80 + 0.89) ≈ <strong>0.84</strong></li></ul>
+<div class="callout"><strong>Passing rule (from this course reviewer):</strong> the model must reach <strong>90% accuracy or higher</strong> to move on to the next step. If it falls short, go back and improve the data, preprocessing, features, or model. <strong>Remember:</strong> accuracy alone can be misleading on imbalanced data (a model that always says “not spam” can score 95% if only 5% of emails are spam), so also check precision, recall, and F1.</div><div class="pager"></div></section>
+<section class="panel" id="step-7"><header class="phead"><span class="eyebrow">Part 2 · Step 7 of 8</span><h1>7. Deployment</h1></header><ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Making the trained model <strong>available for real use</strong> by integrating it into an application or service.</li><li class="lab l-example"><strong>Example</strong>Wrapping the model in a REST API (e.g., Flask or FastAPI) and connecting it to a website chatbot, mobile app, or school system, hosted on a server or cloud platform.</li><li class="lab l-considerations"><strong>Considerations</strong>Response time (latency), ability to handle many users (scalability), security, version control, and cost.</li></ul><div class="pager"></div></section>
+<section class="panel" id="step-8"><header class="phead"><span class="eyebrow">Part 2 · Step 8 of 8</span><h1>8. Monitoring and Model Updating</h1></header><ul class="concept"><li class="lab l-definition"><strong>Definition</strong>Continuously <strong>tracking the model’s performance</strong> after deployment and <strong>updating or retraining</strong> it as needed. Language changes over time, so models become outdated (<strong>data drift</strong> and <strong>concept drift</strong>).</li><li class="lab l-example"><strong>Example</strong>New slang, new product names, or trending topics make a sentiment model less accurate. User feedback and error logs reveal failures, and the model is retrained on fresh data.</li><li class="lab l-practices"><strong>Practices</strong>Track metrics regularly, collect user feedback, log errors, retrain on new data, test new versions (A/B testing), and keep the ability to roll back to an older version.</li></ul><div class="pager"></div></section>
+<section class="panel" id="example"><header class="phead"><span class="eyebrow">Part 2 · Worked Example</span><h1>End-to-End Example: Sentiment Analysis</h1></header><div class="tw"><table><thead><tr><th>Step</th><th>What happens</th></tr></thead><tbody><tr><td>1. Data Gathering</td><td>Collect thousands of product reviews from an online store (remove names and contact details).</td></tr><tr><td>2. Text Cleaning</td><td>“OMG!!! Battery sooo good 10/10 http://shop.ph” → remove URL and extra symbols, fix “sooo.”</td></tr><tr><td>3. Preprocessing</td><td>Tokenize, lowercase, remove stop words (keep “not”), lemmatize.</td></tr><tr><td>4. Feature Engineering</td><td>Convert each review to a TF-IDF vector.</td></tr><tr><td>5. Modeling</td><td>Train a Logistic Regression or fine-tune BERT on labeled positive/negative reviews.</td></tr><tr><td>6. Evaluation</td><td>Test on unseen reviews; check accuracy (≥ 90%), precision, recall, F1.</td></tr><tr><td>7. Deployment</td><td>Serve through an API that shows a sentiment score on the store’s dashboard.</td></tr><tr><td>8. Monitoring</td><td>Watch accuracy over time; retrain when new slang or products appear.</td></tr></tbody></table></div><div class="pager"></div></section>
+<section class="panel" id="review"><header class="phead"><span class="eyebrow">Study Tools</span><h1>Quick Review Questions</h1></header><div class="tw"><table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td>Which level studies the smallest unit of sound?</td><td>Phonological (phonemes).</td></tr><tr><td>Inflection vs derivation?</td><td>Inflection changes grammatical form only (walk → walked); derivation makes a new word (happy → happiness).</td></tr><tr><td>What is the difference between constituency and dependency?</td><td>Constituency groups words into nested phrases; dependency links each word to its head.</td></tr><tr><td>What does SRL answer?</td><td>Who did what to whom, when, and where.</td></tr><tr><td>Coherence vs cohesion?</td><td>Coherence = logical, meaning-based connection; cohesion = surface links like pronouns and transition words.</td></tr><tr><td>What are deictic words?</td><td>Pointing words (I, here, now, tomorrow) whose meaning depends on the speaker and situation.</td></tr><tr><td>Stemming vs lemmatization?</td><td>Stemming chops endings and may give non-words; lemmatization returns valid dictionary words.</td></tr><tr><td>Why can stop word removal be risky?</td><td>It can delete words like “not” and change the meaning.</td></tr><tr><td>Minimum accuracy to proceed from evaluation?</td><td>90% or higher (course benchmark).</td></tr><tr><td>Why monitor a deployed model?</td><td>Language and data change over time, so performance can drop (drift) and the model needs retraining.</td></tr></tbody></table></div><div class="pager"></div></section>
+
+<section class="panel" id="quiz">
+ <header class="phead"><span class="eyebrow">Study Tools</span><h1>Final Quiz</h1></header>
+ <div id="quizApp"></div>
+ <div class="pager" id="quizPager"></div>
+</section>
+</main>
+<script>
+/* Format for multiple choice: [question, CORRECT answer, wrong1, wrong2, wrong3, explanation]. Options are shuffled at runtime. */
+const TERM = [
+["What is the smallest unit of sound in a spoken language that can change the meaning of a word?","Phoneme","Morpheme","Syllable","Token","“bat” and “pat” differ by one phoneme (/b/ vs /p/)."],
+["A written representation of how a word is actually pronounced, usually in the IPA, is called a:","Phonetic transcription","Lemma","Parse tree","Token","It shows real pronunciation, e.g., “knight” → /naɪt/."],
+["Prosody refers to the:","Rhythm, stress, intonation, and pitch of speech","Order of subject, verb, and object","Dictionary form of a word","Links between pronouns and nouns","Prosody carries emotion and sentence type beyond the words."],
+["The smallest unit of language that carries meaning or grammatical function is the:","Morpheme","Phoneme","Constituent","Sentence","Examples: un-, break, -able."],
+["Which of the following is a bound morpheme?","-ness","book","run","happy","Bound morphemes cannot stand alone; -ness must attach to a word."],
+["Inflection is best described as:","Changing a word’s form to show grammatical information without changing its core meaning","Creating a brand-new word with a different part of speech","Splitting text into sentences","Removing very common words","walk → walked is inflection (tense)."],
+["Derivation is best described as:","Creating a new word by adding prefixes or suffixes","Changing only the verb tense","Linking a pronoun to its noun","Correcting spelling errors","teach → teacher creates a new noun."],
+["How many morphemes are in the word “unbreakable”?","3","1","2","4","un- + break + -able."],
+["Lexical semantics studies:","The meaning of individual words and the relationships among them","The grammatical structure of sentences","How sentences connect in a paragraph","The speaker’s hidden intention","It covers synonymy, antonymy, polysemy, and more."],
+["Words with opposite meanings (e.g., hot / cold) are called:","Antonyms","Synonyms","Hyponyms","Homonyms","Antonymy = opposite meaning."],
+["In the relation animal → dog, the word “animal” is the dog’s:","Hypernym","Hyponym","Meronym","Antonym","A hypernym is the general term; the specific type is the hyponym."],
+["Words with the same spelling or sound but unrelated meanings (e.g., “bat” the animal and “bat” in baseball) show:","Homonymy","Polysemy","Synonymy","Meronymy","Polysemy is for related meanings; homonymy is for unrelated ones."],
+["Part-of-speech (POS) tagging means:","Labeling each word with its grammatical category","Splitting text into sentences","Reducing words to their roots","Finding names of people and places","Example: The/DET cat/NOUN sleeps/VERB."],
+["Parsing is:","Analyzing the grammatical structure of a sentence","Removing stop words","Converting text to lowercase","Assigning a sentiment score","It produces a parse tree or dependency graph."],
+["In the SVO word order of English, which element comes first?","Subject","Verb","Object","Adverb","SVO = Subject–Verb–Object."],
+["The principle that groups of words function together as a single grammatical unit is called:","Constituency","Dependency","Inflection","Coherence","Such units are constituents, e.g., noun phrases."],
+["In dependency grammar, the word that governs another word is called the:","Head","Dependent","Morpheme","Token","The governed word is the dependent (modifier)."],
+["In “The cat chased the mouse,” the group “The cat” is a:","Noun phrase","Verb phrase","Root","Prefix","NP + VP together form the sentence (S)."],
+["Word Sense Disambiguation (WSD) is the task of:","Determining which meaning of an ambiguous word is intended in context","Labeling people, places, and dates","Finding which noun a pronoun refers to","Cutting words down to stems","Example: river bank vs money bank."],
+["Semantic Role Labeling (SRL) identifies:","Who did what to whom, when, and where","The pronunciation of each word","The base form of each word","The rhythm of speech","Roles include agent, patient/theme, recipient, time, and place."],
+["Named Entity Recognition (NER) is the task of:","Finding and classifying names of persons, places, organizations, dates, etc.","Choosing the correct word sense","Linking pronouns to nouns","Detecting sarcasm","Example: Calamba → LOCATION."],
+["In Semantic Role Labeling, the doer of the action is the:","Agent","Patient","Recipient","Theme","Agent = doer; patient/theme = receiver."],
+["Coherence in discourse refers to:","The meaning-based, logical flow between sentences","Only the connector words used","The sounds of the text","The spelling of words","Cohesion is the surface wording; coherence is the logic."],
+["Cohesion in discourse refers to:","Surface-level links such as pronouns and transition words","The logical meaning between ideas","The pronunciation of words","The tree structure of a sentence","Examples: therefore, however, she."],
+["Anaphora resolution is:","Determining which earlier word or phrase a pronoun refers to","Labeling words with parts of speech","Removing noise from text","Classifying a speaker’s intent","The earlier phrase is called the antecedent."],
+["Linking all mentions of the same entity in a text (e.g., “Maria,” “she,” “the student”) is called:","Coreference resolution","Lemmatization","Tokenization","Parsing","It is closely related to anaphora resolution."],
+["Speech acts are based on the idea that:","Utterances perform actions such as requesting, promising, or apologizing","Words are made of morphemes","Sentences have a tree structure","Words have several senses","Theory by Austin and Searle."],
+["“I promise to come to your party” is which type of speech act?","Commissive","Assertive","Directive","Expressive","It commits the speaker to a future action."],
+["Deictic words are:","Pointing words (I, here, now, tomorrow) whose meaning depends on the situation","Very common words such as the, is, a","Word endings such as -ed and -ing","Words with opposite meanings","Their meaning depends on who says them, where, and when."],
+["Contextual understanding in NLP means:","Interpreting the intended meaning using the situation and background knowledge","Counting word frequency","Converting text to lowercase","Finding word stems","Example: “It’s cold in here” may mean “Please close the window.”"],
+["The phrase “Garbage in, garbage out” refers to the importance of:","Data quality","Data privacy","Model deployment","Tokenization","Bad data produces bad model output."],
+["The principle of least privilege means:","Users receive only the access they need","Everyone has full access to the data","Data is deleted after each use","Data is stored without encryption","It is part of managing data accessibility (RBAC)."],
+["Which Philippine law governs the protection of personal data used in NLP projects?","Data Privacy Act of 2012 (RA 10173)","Anti-Wiretapping Law (RA 4200)","Intellectual Property Code (RA 8293)","Local Government Code","RA 10173 is the Data Privacy Act of 2012."],
+["Tokenization is the process of:","Splitting text into smaller units such as sentences and words","Converting text into lowercase","Removing very common words","Reducing words to dictionary form","Tokens are later mapped to numbers."],
+["Stop word removal removes words such as:","the, is, a, of","happy, sad, angry","Rizal, Manila, June","run, running, ran","They add little meaning, but removing them can change meaning (e.g., “not”)."],
+["Which technique may produce non-words such as “studi” or “quickli”?","Stemming","Lemmatization","Tokenization","Lowercasing","Stemming cuts word endings using fixed rules."],
+["Normalization in text cleaning means:","Converting text to a standard form (e.g., “2moro” → “tomorrow”)","Removing all numbers","Splitting text into sentences","Training the model","It makes variants of the same word consistent."],
+["Bag of Words represents text by:","Counting how often each word appears, ignoring word order","Keeping the exact order of words","Labeling the grammar of each word","Finding named entities","Example: “I love NLP” → [1, 1, 1, 0]."],
+["TF-IDF gives a higher weight to words that are:","Frequent in a document but rare across all documents","Common in every document","The shortest words","At the start of a sentence","This highlights words that are distinctive."],
+["A model that performs very well on training data but poorly on new data is:","Overfitting","Underfitting","Normalized","Deployed","It memorized the training data."],
+["Precision is computed as:","TP / (TP + FP)","TP / (TP + FN)","(TP + TN) / total","2 × P × R / (P + R)","Of everything predicted positive, how many were truly positive."],
+["Recall is computed as:","TP / (TP + FN)","TP / (TP + FP)","(TP + TN) / total","TN / (TN + FP)","Of all truly positive cases, how many were found."],
+["The F1-score is:","The balance (harmonic mean) of precision and recall","The same as accuracy","The number of false positives","The size of the dataset","F1 = 2 × P × R / (P + R)."],
+["Data drift and concept drift in monitoring mean that:","Language or data changes over time, so model performance can drop","The model deletes old data","The model trains faster","The data becomes encrypted","New slang or topics make a model outdated."]
+];
+
+const APPL = [
+["A speech-recognition app keeps confusing “bat” and “pat.” These words differ by a single:","Phoneme","Morpheme","Constituent","Lemma","/b/ vs /p/ is a phoneme difference (phonological level)."],
+["A text-to-speech voice reads “You’re coming?” like a flat statement. Which feature is it missing?","Prosody (rising intonation)","Morphology","Anaphora","Named entities","Pitch and intonation turn a statement into a question."],
+["A call-center tool detects angry customers from voice pitch and speaking speed. Which concept does it rely on?","Prosody","Inflection","Dependency","Cohesion","Pitch, stress, and speed are prosodic features."],
+["A search engine returns results for “run” when the user types “running.” Which level helps it see they are forms of one word?","Morphological","Pragmatic","Discourse","Phonological","Word forms (inflection) are handled at the morphological level."],
+["A system learns that adding -er to “teach” creates the new noun “teacher.” This is:","Derivation","Inflection","Tokenization","Coreference","A new word with a new part of speech is formed."],
+["In Filipino, “sulat” becomes “sumulat” (wrote) to show completed aspect. This is mainly:","Inflection","Derivation of a new noun","Stop word removal","Deixis","Grammatical aspect is shown by changing the form (an infix)."],
+["A search for “car” also returns pages containing “automobile.” Which word relation is being used?","Synonymy","Antonymy","Meronymy","Homonymy","Query expansion uses words with similar meaning."],
+["A chatbot scores reviews using a list of positive and negative words. This list is a:","Sentiment lexicon","Parse tree","Speech act","Discourse marker","Word lists with polarity belong to the lexical level."],
+["A grammar checker flags “The dogs barks loudly.” Which level of analysis detects the problem?","Syntactic","Phonological","Lexical","Pragmatic","Subject–verb agreement depends on sentence structure."],
+["A translator converts English “Maria eats rice” to Filipino “Kumain si Maria ng kanin.” What must it handle?","Different word order (SVO vs verb-first)","Different phonemes only","Different stop words only","Different named entities","Languages arrange subject, verb, and object differently."],
+["A parser cannot decide whether “with the telescope” describes the man or the act of seeing in “I saw the man with the telescope.” This problem is:","Syntactic ambiguity","Lexical homonymy","A coherence error","Data drift","Two valid parses exist for one sentence."],
+["A tool must extract all noun phrases such as “the red car” from a document. Which approach fits best?","Constituency parsing","Phoneme analysis","Stemming","Speech act classification","Constituency parsing groups words into phrases like NPs."],
+["To find which adjective describes which noun in product reviews, a developer should use:","Dependency parsing","Tokenization only","Lowercasing","Stop word removal","Dependency links show head–modifier relations."],
+["A translator must choose the right word for “bank” in “She deposited cash at the bank.” This task is:","Word Sense Disambiguation","Named Entity Recognition","Stemming","Prosody analysis","Context shows the financial sense."],
+["A system reads “Maria gave Juan a book yesterday” and can answer “Who received the book?” Which task made this possible?","Semantic Role Labeling","Lemmatization","Phonetic transcription","Stop word removal","SRL labels agent, recipient, theme, and time."],
+["A resume parser automatically extracts names, companies, and dates. This is:","Named Entity Recognition","Word Sense Disambiguation","Anaphora resolution","Stemming","NER classifies persons, organizations, and dates."],
+["A summarizer must work out whom “she” points to in “Maria told Ana that she won.” This task is:","Anaphora resolution","Tokenization","POS tagging","Normalization","It links the pronoun to its antecedent."],
+["An automated essay scorer flags a paragraph whose sentences are unrelated to each other. It is checking:","Coherence","Phonemes","Inflection","Stemming","Sentences should be logically related."],
+["A writing assistant suggests adding “therefore” and “however” between sentences. It is improving:","Cohesion","Prosody","Named entities","Accuracy","Transition words are surface links."],
+["A user tells a voice assistant, “Remind me tomorrow.” The assistant must work out the actual date. This involves:","Deixis","Derivation","Dependency parsing","Stemming","“tomorrow” depends on when it is said."],
+["A voice assistant plays music when the user says “Can you play some music?” It correctly recognized a(n):","Indirect request (speech act)","Homonym","Stemming error","Named entity","The sentence is a request, not a question about ability."],
+["A sentiment model labels “Great, another Monday!” as negative. It correctly used:","Pragmatic (contextual) understanding","Phonetic transcription","Derivation","Stop word removal","Sarcasm needs context beyond the literal words."],
+["A smart-home assistant closes the window when the user says “It’s cold in here.” This shows:","Pragmatic understanding of intent","Morphological analysis","Tokenization","Lemmatization","It inferred an unstated request."],
+["A chatbot labels “Book me a flight to Manila” with the intent “booking.” This relies on identifying a:","Directive speech act","Commissive speech act","Homonym","Morpheme","The user is asking the system to act."],
+["A reviews dataset has missing ratings and dates written in different formats. Which data-gathering challenge is this?","Data quality","Data privacy","Data accessibility","Bias","Incomplete and inconsistent data lower quality."],
+["Chat logs contain customers’ phone numbers and addresses. What should be done before using them?","Anonymize them and remove identifying information","Publish them to improve transparency","Use them exactly as they are","Add more personal details","Required by data privacy laws such as RA 10173."],
+["A model trained mostly on formal English performs poorly on Taglish posts. Which challenge is this?","Bias and representativeness","Data volume","Data accessibility","Deployment cost","The training data did not represent all users."],
+["Only authorized staff may open student records in an NLP project. Which concept applies?","Role-based access control / least privilege","Stemming","Tokenization","Overfitting","It controls who can access the data."],
+["Scraped text is full of HTML tags, URLs, and extra spaces. Which pipeline step handles this?","Text cleaning","Modeling","Deployment","Evaluation","Noise removal belongs to text cleaning."],
+["A developer changes “2moro” to “tomorrow” and “gonna” to “going to.” This is:","Normalization","Tokenization","Lemmatization","Feature engineering","Variants are converted to a standard form."],
+["After stop word removal, “This is not good” becomes “good.” What is the problem and a fix?","Meaning is lost; keep negation words such as “not”","Nothing; stop words are never important","The text is too long; add more stop words","The text is lowercase; capitalize it","Negation flips sentiment, so it should be kept."],
+["A tool converts “studies” → “study” and “better” → “good.” It uses:","Lemmatization","Stemming","Tokenization","Lowercasing","Dictionary forms are returned; a stemmer cannot do “better” → “good.”"],
+["A tool converts “quickly” → “quickli” and “beautiful” → “beauti.” It uses:","Stemming","Lemmatization","Normalization","Deployment","Rule-based cutting leaves non-words."],
+["A team converts every review into a TF-IDF vector. Which pipeline step is this?","Feature engineering","Data gathering","Deployment","Monitoring","Text is turned into numbers for the model."],
+["A team trains a Naive Bayes classifier on TF-IDF vectors. Which pipeline step is this?","Modeling","Text cleaning","Evaluation","Monitoring","Training an algorithm is modeling."],
+["A model scores 98% on training data but only 70% on new data. This suggests:","Overfitting","Underfitting","Perfect generalization","A privacy problem","It memorized the training set."],
+["A spam filter has TP = 40, FP = 10, FN = 5, and TN = 45. What is its accuracy?","85%","80%","89%","90%","(40 + 45) / 100 = 85%."],
+["Using the same counts (TP = 40, FP = 10, FN = 5, TN = 45), what is the precision?","0.80","0.85","0.89","0.50","40 / (40 + 10) = 0.80."],
+["Only 5% of emails are spam, and a model that always says “not spam” gets 95% accuracy. What should be checked as well?","Precision, recall, and F1-score","Only accuracy","The number of tokens","The font size","Accuracy is misleading with imbalanced data."],
+["A model scores 84% accuracy but the course benchmark is 90%. What should the team do?","Go back and improve the data, preprocessing, features, or model","Deploy it anyway","Delete the test set","Stop monitoring","It must reach 90% or higher to move on."],
+["A trained chatbot is placed behind a REST API on a school website. Which pipeline step is this?","Deployment","Modeling","Text cleaning","Feature engineering","Deployment makes the model available for real use."],
+["Months after launch, a sentiment model becomes less accurate because of new slang. What should the team do?","Monitor performance and retrain on fresh data","Ignore it","Remove the test set","Switch everything to lowercase","Language changes, so models need updating."],
+["Before training, a team splits paragraphs into sentences and sentences into words. This is:","Tokenization","Stemming","Evaluation","Deployment","Tokens are the units later mapped to numbers."],
+["An organization collects reviews from websites, APIs, and surveys to train its model. Which pipeline step is this?","Data gathering","Evaluation","Deployment","Stemming","Collecting varied textual input comes first."]
+];
+
+const LV = ["Phonological","Morphological","Lexical","Syntactic","Semantic","Discourse","Pragmatic"];
+const PL = ["Data Gathering","Text Cleaning","Text Preprocessing","Feature Engineering","Modeling","Evaluation","Deployment","Monitoring and Model Updating"];
+const LEVEL_EXP = "Order: Phonological (sounds) → Morphological (word parts) → Lexical (words) → Syntactic (sentence structure) → Semantic (meaning) → Discourse (connected text) → Pragmatic (intent in context).";
+const PIPE_EXP = "Order: Data Gathering → Text Cleaning → Text Preprocessing → Feature Engineering → Modeling → Evaluation → Deployment → Monitoring and Model Updating.";
+/* Ordering items: "a" lists the items in their CORRECT order; they are shuffled at runtime. */
+const ORDER = [
+{q:"Arrange the 7 levels of language processing from the lowest (sound) level to the highest (context) level.", a:LV, e:LEVEL_EXP},
+{q:"Arrange these levels in the correct order, from lowest to highest.", a:[LV[0],LV[2],LV[3],LV[5]], e:LEVEL_EXP},
+{q:"Arrange these levels in the correct order, from lowest to highest.", a:[LV[0],LV[1],LV[4],LV[5],LV[6]], e:LEVEL_EXP},
+{q:"Arrange these levels in the correct order, from lowest to highest.", a:[LV[2],LV[3],LV[4],LV[6]], e:LEVEL_EXP},
+{q:"Arrange these levels in the correct order, from lowest to highest.", a:[LV[1],LV[2],LV[3],LV[5],LV[6]], e:LEVEL_EXP},
+{q:"Each example below belongs to a different level. Arrange the examples by level, from Phonological up to Pragmatic.", a:["Rising pitch turns “You’re coming.” into a question","“unhappiness” = un + happy + ness","“bank” can mean a money place or a river edge","[S [NP The cat] [VP chased the mouse]]","“Jose Rizal” is tagged as PERSON","“Ana is tired. She went to bed.” (She = Ana)","“Can you pass the salt?” is a request"], e:"Examples map to: Phonological (prosody) → Morphological (morphemes) → Lexical (word meanings) → Syntactic (parse) → Semantic (NER) → Discourse (anaphora) → Pragmatic (speech act)."},
+{q:"Arrange the 8 steps of the NLP pipeline in the correct order.", a:PL, e:PIPE_EXP},
+{q:"Arrange these pipeline steps in the correct order.", a:[PL[0],PL[4],PL[5],PL[6]], e:PIPE_EXP},
+{q:"Arrange these pipeline steps in the correct order.", a:[PL[1],PL[2],PL[3],PL[5],PL[7]], e:PIPE_EXP},
+{q:"Arrange the text preprocessing techniques in the order they appear in the reviewer.", a:["Tokenization","Lowercasing","Stop Word Removal","Normalization","Stemming / Lemmatization"], e:"Order: a. Tokenization → b. Lowercasing → c. Stop Word Removal → d. Normalization → e. Stemming / Lemmatization."},
+{q:"A team builds a sentiment analyzer for product reviews. Arrange their actions in the correct pipeline order.", a:["Collect product reviews from an online store","Remove URLs, symbols, and extra spaces","Tokenize, lowercase, and lemmatize the reviews","Convert each review to a TF-IDF vector","Train a Logistic Regression classifier","Test on unseen reviews and check accuracy, precision, recall, and F1","Serve the model through an API","Watch accuracy and retrain when new slang appears"], e:"Gathering → Cleaning → Preprocessing → Feature engineering → Modeling → Evaluation → Deployment → Monitoring."},
+{q:"Arrange these results in the order they are produced when preprocessing “The children are running quickly to the beautiful parks!”", a:["Original sentence: The children are running quickly to the beautiful parks!","Tokens: [The, children, are, running, quickly, to, the, beautiful, parks, !]","Lowercased tokens: [the, children, are, running, ...]","Stop words and punctuation removed: [children, running, quickly, beautiful, parks]","Lemmatized: [child, run, quickly, beautiful, park]"], e:"Tokenize → lowercase → remove stop words/punctuation → lemmatize."}
+];
+
+
+/* ---------- navigation ---------- */
+const links=[...document.querySelectorAll('#nav a')];
+const panels=[...document.querySelectorAll('.panel')];
+const order=links.map(a=>a.getAttribute('href').slice(1));
+function go(id){
+  if(!order.includes(id)) id='home';
+  panels.forEach(p=>p.classList.toggle('active',p.id===id));
+  links.forEach(a=>{const on=a.getAttribute('href')==='#'+id;a.classList.toggle('active',on);if(on)a.classList.add('visited')});
+  document.getElementById('side').classList.remove('open');
+  window.scrollTo(0,0);
+  const act=document.querySelector('#nav a.active'); if(act) act.scrollIntoView({block:'nearest'});
+}
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)));
+document.getElementById('burger').onclick=()=>document.getElementById('side').classList.toggle('open');
+panels.forEach(p=>{
+  const i=order.indexOf(p.id), box=p.querySelector('.pager'); if(!box) return;
+  const lab=j=>links[j].textContent.replace('✓','').trim();
+  box.innerHTML=(i>0?`<a href="#${order[i-1]}">← ${lab(i-1)}</a>`:'<span></span>')+(i<order.length-1?`<a href="#${order[i+1]}">${lab(i+1)} →</a>`:'<span></span>');
+});
+go(location.hash.slice(1)||'home');
+
+/* ---------- quiz ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sameArr=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
+const PICK={Terminology:22,Application:22,Ordering:6};
+let S={list:[],i:0,res:[]};
+const app=document.getElementById('quizApp');
+
+function build(){
+  const mc=(kind,bank,n)=>shuffle(bank).slice(0,n).map(x=>({kind,type:'mc',q:x[0],ans:x[1],opts:shuffle(x.slice(1,5)),e:x[5]}));
+  const dr=shuffle(ORDER).slice(0,PICK.Ordering).map(x=>{let o=shuffle(x.a);let t=0;while(sameArr(o,x.a)&&t++<20)o=shuffle(x.a);return{kind:'Ordering',type:'drag',q:x.q,ans:x.a,start:o,e:x.e}});
+  return shuffle([...mc('Terminology',TERM,PICK.Terminology),...mc('Application',APPL,PICK.Application),...dr]);
+}
+function intro(){
+  app.innerHTML=`<div class="qbox">
+   <h3 style="margin-top:0">Test yourself</h3>
+   <p>The question bank has <b>100 items</b>. Each attempt randomly draws <b>50</b> of them:</p>
+   <ul><li><b>22 Terminology</b> multiple-choice items (definitions and key terms)</li>
+   <li><b>22 Application / Situational</b> multiple-choice items (what concept or step fits the situation)</li>
+   <li><b>6 Click-and-drag</b> items (order the levels or the pipeline steps)</li></ul>
+   <p class="small">You get instant feedback and an explanation after every item. Questions and choices are shuffled each time, so retake it as often as you like.</p>
+   <button class="btn" id="start">Start Quiz</button></div>`;
+  document.getElementById('start').onclick=()=>{S={list:build(),i:0,res:[]};render()};
+}
+function head(q){
+  const n=S.list.length;
+  return `<div class="qmeta"><span>Question <b>${S.i+1}</b> of ${n}</span><span class="badge">${q.kind}</span></div>
+  <div class="bar"><i style="width:${(S.i/n)*100}%"></i></div>`;
+}
+function nextBtn(){return `<button class="btn" id="next">${S.i===S.list.length-1?'See Results':'Next →'}</button>`}
+function render(){
+  const q=S.list[S.i];
+  if(q.type==='mc'){
+    app.innerHTML=`<div class="qbox">${head(q)}<p class="qtext">${esc(q.q)}</p><div class="opts">${q.opts.map((o,i)=>`<button class="opt" data-v="${i}"><span class="k">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="fb"></div></div>`;
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const pick=q.opts[+b.dataset.v], ok=pick===q.ans;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true;const v=q.opts[+x.dataset.v];if(v===q.ans)x.classList.add('correct');else if(x===b)x.classList.add('wrong')});
+      S.res.push({q,ok,yours:pick});
+      document.getElementById('fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Correct!':'Not quite.'}</b> ${ok?'':'The answer is <b>'+esc(q.ans)+'</b>. '}${esc(q.e)}</div>${nextBtn()}`;
+      document.getElementById('next').onclick=advance;
+    });
+  }else{
+    app.innerHTML=`<div class="qbox">${head(q)}<p class="qtext">${esc(q.q)}</p>
+     <p class="hint">Drag the items (or use the ▲ ▼ buttons) to put them in the correct order, then press “Check order”.</p>
+     <ol class="drag" id="dl">${q.start.map(t=>`<li draggable="true" data-v="${esc(t)}"><span class="g">⠿</span><span class="t">${esc(t)}</span><span class="mv"><button type="button" data-d="-1" aria-label="Move up">▲</button><button type="button" data-d="1" aria-label="Move down">▼</button></span></li>`).join('')}</ol>
+     <div id="fb"><button class="btn" id="chk">Check order</button></div></div>`;
+    const list=document.getElementById('dl');
+    let dragged=null;
+    list.addEventListener('dragstart',e=>{dragged=e.target.closest('li');if(!dragged)return;dragged.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain','x')}catch(_){}});
+    list.addEventListener('dragend',()=>{if(dragged)dragged.classList.remove('dragging');dragged=null});
+    list.addEventListener('dragover',e=>{
+      if(!dragged||list.classList.contains('locked'))return;e.preventDefault();
+      const after=[...list.querySelectorAll('li:not(.dragging)')].find(el=>{const r=el.getBoundingClientRect();return e.clientY<r.top+r.height/2});
+      if(after)list.insertBefore(dragged,after);else list.appendChild(dragged);
+    });
+    list.addEventListener('click',e=>{
+      const b=e.target.closest('button[data-d]');if(!b||list.classList.contains('locked'))return;
+      const li=b.closest('li'),d=+b.dataset.d;
+      if(d<0&&li.previousElementSibling)list.insertBefore(li,li.previousElementSibling);
+      if(d>0&&li.nextElementSibling)list.insertBefore(li.nextElementSibling,li);
+    });
+    document.getElementById('chk').onclick=()=>{
+      const items=[...list.querySelectorAll('li')], got=items.map(l=>l.dataset.v), ok=sameArr(got,q.ans);
+      list.classList.add('locked');items.forEach((l,i)=>{l.draggable=false;l.classList.add(got[i]===q.ans[i]?'good':'bad');l.querySelector('.mv').remove()});
+      S.res.push({q,ok,yours:got.join(' → ')});
+      document.getElementById('fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Correct order!':'Not quite.'}</b> ${ok?'':'Correct order: <b>'+q.ans.map(esc).join(' → ')+'</b>. '}${esc(q.e)}</div>${nextBtn()}`;
+      document.getElementById('next').onclick=advance;
+    };
+  }
+}
+function advance(){S.i++;S.i<S.list.length?(render(),window.scrollTo(0,0)):results()}
+function results(){
+  const n=S.res.length, ok=S.res.filter(r=>r.ok).length, pct=Math.round(ok/n*100);
+  const by={};S.res.forEach(r=>{(by[r.q.kind]=by[r.q.kind]||{ok:0,n:0}).n++;if(r.ok)by[r.q.kind].ok++});
+  const miss=S.res.filter(r=>!r.ok);
+  const msg=pct>=90?'Excellent! You are well prepared.':pct>=75?'Good job! Review the missed items below.':'Keep studying. Re-read the lessons and try again.';
+  app.innerHTML=`<div class="qbox"><div class="bar"><i style="width:100%"></i></div>
+   <p class="small" style="margin:0">Your score</p><div class="score">${ok}/${n} <span style="font-size:28px;color:var(--blue)">(${pct}%)</span></div>
+   <p style="margin-top:10px"><b>${msg}</b></p>
+   <div class="cards">${Object.keys(by).map(k=>`<div class="card"><b>${k}</b><span>${by[k].ok} of ${by[k].n} correct</span></div>`).join('')}</div>
+   <h3 style="margin-top:6px">${miss.length?'Items to review ('+miss.length+')':'No missed items. Perfect run!'}</h3>
+   ${miss.map(r=>`<div class="miss"><small>${r.q.kind}</small><div><b>${esc(r.q.q)}</b></div><div class="small">Your answer: ${esc(r.yours)}</div><div><b>Correct:</b> ${r.q.type==='mc'?esc(r.q.ans):r.q.ans.map(esc).join(' → ')}</div><div class="small">${esc(r.q.e)}</div></div>`).join('')}
+   <button class="btn" id="again">Retake (new random 50)</button><a class="btn alt" href="#home" style="text-decoration:none">Back to lessons</a></div>`;
+  document.getElementById('again').onclick=()=>{S={list:build(),i:0,res:[]};render();window.scrollTo(0,0)};
+  window.scrollTo(0,0);
+}
+intro();
+</script>
+</body>
+</html>
