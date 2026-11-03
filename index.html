@@ -125,7 +125,7 @@ ol.drag.locked li{cursor:default}
 </aside>
 <main id="main">
 <section class="panel" id="home"><header class="phead"><span class="eyebrow">Introduction</span><h1>Introduction: What is NLP?</h1></header><div class="hero"><h1>Levels of Language Processing in NLP &amp; the NLP Pipeline</h1><p>Completed and expanded reviewer: definitions, examples, applications, and two randomized 50-item quizzes.</p></div>
-<div class="cards"><div class="card"><b>Part 1 · 7 Levels</b><span>Phonological to Pragmatic, with concepts, examples, and applications.</span></div><div class="card"><b>Part 2 · 8 Steps</b><span>From data gathering to monitoring, with challenges and worked examples.</span></div><div class="card"><b>Final Quiz</b><span>100-item bank, 50 random items per attempt: multiple choice and click-and-drag.</span></div><div class="card"><b>Identification Quiz</b><span>200-item bank, 50 random items per attempt: type your answer.</span></div></div>
+<div class="cards"><div class="card"><b>Part 1 · 7 Levels</b><span>Phonological to Pragmatic, with concepts, examples, and applications.</span></div><div class="card"><b>Part 2 · 8 Steps</b><span>From data gathering to monitoring, with challenges and worked examples.</span></div><div class="card"><b>Final Quiz</b><span>100-item bank, 50 random items per attempt: multiple choice and click-and-drag.</span></div><div class="card"><b>Identification Quiz</b><span>200-clue bank, 50 random per attempt: name the term described.</span></div></div>
 <p><strong>Natural Language Processing (NLP)</strong> is a field of Artificial Intelligence that enables computers to <strong>understand, interpret, generate, and respond to human language</strong>, in both text and speech. Everyday examples: Google Translate, chatbots, voice assistants (Siri, Alexa), spam filters, autocorrect, and search engines.</p>
 <p>Human language is complex and ambiguous, so NLP breaks it down into <strong>levels</strong>. Each level adds a deeper layer of understanding, from raw sounds and word parts up to the speaker’s real intent. To actually build an NLP system, the work is organized into a step-by-step <strong>pipeline</strong> (Part 2).</p>
 <div class="callout"><strong>Memory aid for the 7 levels (in order):</strong> “<strong>P</strong>ink <strong>M</strong>onkeys <strong>L</strong>ove <strong>S</strong>weet <strong>S</strong>trawberries <strong>D</strong>uring <strong>P</strong>icnics” = <strong>P</strong>honological, <strong>M</strong>orphological, <strong>L</strong>exical, <strong>S</strong>yntactic, <strong>S</strong>emantic, <strong>D</strong>iscourse, <strong>P</strong>ragmatic.</div><div class="pager"></div></section>
@@ -459,235 +459,238 @@ intro();
 </script>
 <script>
 /* ---------- Identification quiz: 200-item bank, 50 random per attempt ----------
-   Format per line:  question | accepted answer ; other accepted answer ; ...
+   Format per line:  clue | accepted answer ; other accepted answer ; ...
    Typing is forgiving: case, punctuation, accents, leading "the/a/an", and small typos are ignored. */
 (function(){
-const RAW=`What is the smallest unit of sound in a spoken language that can change the meaning of a word?|phoneme;phonemes
-What do you call a written representation of how a word is actually pronounced?|phonetic transcription
-What term refers to the rhythm, stress, intonation, pitch, and speed of speech?|prosody
-Which level of language processing studies speech sounds?|phonological;phonological level
-About how many phonemes does English have?|44;forty-four
-How many phonemes are in the word "cat"?|3;three
-Rising pitch that turns "You're coming." into a question is an example of what?|prosody;intonation
-What technology converts audio into phonemes and then into words?|speech recognition
-What technology does the reverse of speech recognition by turning text into sound?|text-to-speech;tts;speech synthesis
-Which prosodic feature changes the meaning between "I didn't STEAL the money" and "I didn't steal THE MONEY"?|stress
-"Though", "through", and "tough" share the same letters. What are they?|ough
-What is the smallest meaningful unit of language, carrying meaning or grammatical function?|morpheme;morphemes
-Which level of language processing studies the internal structure of words?|morphological;morphological level
-How many morphemes are in the word "unbreakable"?|3;three
-How many morphemes are in the word "dogs"?|2;two
-What do you call changing a word's form to show grammatical information without changing its core meaning?|inflection
-What do you call creating a new word by adding prefixes or suffixes?|derivation
-walk → walked is an example of what?|inflection
-happy → happiness is an example of what?|derivation
-teach → teacher is an example of what?|derivation
-cat → cats is an example of what?|inflection
-Which one usually changes a word's core meaning: inflection or derivation?|derivation
-Which one shows grammatical function: inflection or derivation?|inflection
-In "unhappiness", what is the suffix?|ness;-ness
-In "unhappiness", what is the root word?|happy
-A morpheme is not the same as a what?|syllable
-Name one technique that reduces words like run, runs, and running to a base form.|stemming;lemmatization
-What do you call the study of the meaning of individual words and the relationships among them?|lexical semantics;lexical
-Which level of language processing deals with individual words and what they mean?|lexical;lexical level
-Words that have the same meaning, such as big and large, are called what?|synonyms;synonym
-Words that have opposite meanings, such as hot and cold, are called what?|antonyms;antonym
-"Head" of a person and "head" of a company shows that one word can have what?|several meanings;multiple meanings;more than one meaning;multiple senses
-Which resource lists words with similar meanings?|thesaurus;thesauri
-A search for "car" also returning "automobile" uses knowledge from which level?|lexical;lexical level
-In "She sat by the river bank", what does "bank" mean?|river edge;shore;riverbank;edge of the river
-Which level studies how words are arranged into phrases and sentences following grammar rules?|syntactic;syntactic level
-What do you call analyzing the grammatical structure of a sentence to produce a tree?|parsing;syntactic parsing
-What does SVO stand for?|subject verb object;subject-verb-object
-What is the typical word order of Filipino?|verb first;vso;verb subject object;verb-first
-In Korean, which sentence element comes last?|verb
-What do you call the principle that groups of words function together as a single grammatical unit?|constituency
-What is such a group of words called?|constituent;constituents
-What do you call the grammatical relationship in which one word governs or describes another?|dependency
-In dependency grammar, what is the governing word called?|head;governor
-In dependency grammar, what is the word that modifies the head called?|dependent;modifier
-In "The cat chased the mouse", which word is the head?|chased
-"The dog bites the man" and "The man bites the dog" differ in what?|word order;sentence structure;syntax
-In "Maria eats rice", what is the subject?|maria
-In "Maria eats rice", what is the object?|rice
-In SVO, which element is the one who does the action?|subject
-In SVO, which element receives the action?|object
-What kind of tool flags "The dogs barks loudly."?|grammar checker
-Machine translation must reorder words between languages because of different what?|word order
-Which level studies the meaning of words and sentences in context?|semantic;semantic level
-"Colorless green ideas sleep furiously" is grammatical but lacks what?|meaning
-What does WSD stand for?|word sense disambiguation
-What does SRL stand for?|semantic role labeling
-What does NER stand for?|named entity recognition
-In "Maria gave Juan a book yesterday", who is the agent?|maria
-In "Maria gave Juan a book yesterday", who is the receiver?|juan
-In "Maria gave Juan a book yesterday", what is the action?|gave
-In "Maria gave Juan a book yesterday", what is the time?|yesterday
-In SRL, what is the doer of the action called?|agent
-What does SRL answer, in one phrase?|who did what to whom
-What is the NER label for "Jose Rizal"?|person
-What is the NER label for "Calamba, Laguna"?|location
-What is the NER label for "June 19, 1861"?|date
-What is the NER label for "Google"?|organization
-What is the NER label for "50%"?|percentage
-Which task extracts names, companies, and dates from resumes?|ner;named entity recognition
-In "A book was given to Juan by Maria", who is the agent?|maria
-In "I saw a bat fly out of the cave", what does "bat" mean?|animal
-In "He swung the bat", what does "bat" mean?|baseball bat;sports equipment;sports
-Which level goes beyond a single sentence?|discourse;discourse level
-What do you call the meaning-based, logical flow of a text?|coherence
-What do you call the surface-level links, such as pronouns and transition words, that tie sentences together?|cohesion
-Which is the "glue" in the wording: coherence or cohesion?|cohesion
-"Ana was hungry. The moon orbits the Earth." lacks what?|coherence
-"However" and "therefore" are transition words that create what?|cohesion
-What do you call determining which earlier word a pronoun refers to?|anaphoric resolution;anaphora resolution;coreference resolution
-In "Ana is tired. She went to bed.", who does "She" refer to?|ana
-In "The trophy didn't fit in the suitcase because it was too big", what does "it" refer to?|trophy
-In "The trophy didn't fit in the suitcase because it was too small", what does "it" refer to?|suitcase
-In "Maria told Ana that she won", which word is ambiguous?|she
-Which level concerns multi-turn chatbots tracking pronouns across sentences?|discourse
-What is the highest level of language processing?|pragmatic;pragmatic level
-What do you call the idea that utterances perform actions such as requesting or promising?|speech acts;speech act
-"Can you pass the salt?" is really a what?|request
-"I promise to come" performs a what?|promise
-"It's raining." states a what?|fact
-"Thank you!" expresses what?|feelings;gratitude
-"You're hired." changes someone's what?|status
-What do you call pointing words whose meaning depends on who says them, where, and when?|deixis;deictic words;deictic
-"I", "you", and "we" are deixis of which type?|person
-"Here", "there", "this", and "that" are deixis of which type?|place
-"Now", "today", and "tomorrow" are deixis of which type?|time
-Deictic words are not the same as what?|prepositions
-What do you call interpreting the intended meaning using situation, tone, and background knowledge?|contextual understanding
-"It's cold in here" may really mean what?|close the window;please close the window
-"Great, another Monday!" is usually what?|sarcasm
-Which level handles sarcasm detection?|pragmatic;pragmatic level
-A voice assistant told "Remind me tomorrow" must understand which concept?|deixis
-How many levels of language processing are there?|7;seven
-What is the 1st level of language processing?|phonological
-What is the 2nd level of language processing?|morphological
-What is the 3rd level of language processing?|lexical
-What is the 4th level of language processing?|syntactic
-What is the 5th level of language processing?|semantic
-What is the 6th level of language processing?|discourse
-What is the 7th level of language processing?|pragmatic
-What field of AI enables computers to understand, interpret, generate, and respond to human language?|natural language processing;nlp
-What is the step-by-step workflow that turns raw language data into a working NLP system?|nlp pipeline;pipeline
-How many steps are in the NLP pipeline?|8;eight
-What is Step 1 of the NLP pipeline?|data gathering;data gathering input
-What is Step 2 of the NLP pipeline?|text cleaning
-What is Step 3 of the NLP pipeline?|text preprocessing
-What is Step 4 of the NLP pipeline?|feature engineering
-What is Step 5 of the NLP pipeline?|modeling
-What is Step 6 of the NLP pipeline?|evaluation
-What is Step 7 of the NLP pipeline?|deployment
-What is Step 8 of the NLP pipeline?|monitoring and model updating;monitoring;model updating
-Which pipeline step comes right after Data Gathering?|text cleaning
-Which pipeline step comes right before Feature Engineering?|text preprocessing
-Which pipeline step comes right after Modeling?|evaluation
-Which pipeline step comes right after Evaluation?|deployment
-Which pipeline step comes right before Deployment?|evaluation
-Which pipeline step comes right before Monitoring and Model Updating?|deployment
-Which step collects text from websites, social media, surveys, and emails?|data gathering
-Which step turns text into numbers the model can use?|feature engineering
-Which step trains a model on the prepared data?|modeling
-"Garbage in, garbage out" refers to which data challenge?|data quality
-Reviews with missing ratings are an example of which data-quality problem?|incomplete data;missing data;incomplete
-Dates written as 05/10/26 and "May 10, 2026" show which data-quality problem?|inconsistent format;inconsistent data format;inconsistent data
-What do you call removing personal identifying information from data?|anonymization;anonymizing;anonymize
-Which Philippine law protects personal data?|data privacy act of 2012;data privacy act;ra 10173;10173
-Which data challenge is about who can access the data?|data accessibility
-Which principle says users get only the access they need?|principle of least privilege;least privilege
-Which access method gives permissions based on a person's role?|role-based access control;rbac
-Which challenge arises when data is huge and comes as text, images, audio, and video?|data volume and variety
-Which challenge is about fair representation of the people the model serves?|bias and representativeness
-A model trained mostly on formal English performs poorly on Taglish. Which challenge is this?|bias and representativeness
-Which kind of data is harder to handle: structured or unstructured?|unstructured;unstructured data
-Chat logs with names and phone numbers raise which data challenge?|data privacy and security;data privacy;privacy
-Data should be encrypted and what, to protect people's identities?|anonymized
-What is any part of the text that does not help the task called?|noise
-HTML tags, URLs, emojis, and extra spaces are examples of what?|noise
-What do you call converting text into a standard form?|normalization
-"gonna" → "going to" is an example of what?|normalization
-"2moro" → "tomorrow" is an example of what?|normalization
-Without normalization, the model treats "color" and "colour" as two different what?|words
-Emojis may be useful for which task?|sentiment;sentiment analysis
-The Filipino text slang "d2" is normalized to what?|dito
-What do you call splitting text into smaller pieces?|tokenization
-What are the smaller pieces from tokenization called?|tokens;token
-Tokens are later mapped to what, so the model can process them?|numbers;ids
-Tokenization splits paragraphs into what?|sentences
-Which punctuation mark can wrongly end a sentence in "Dr. Cruz" or "3.14"?|period;full stop
-What do you call converting all text to small letters?|lowercasing
-"Apple" (company) vs "apple" (fruit) shows that case can carry what?|meaning
-What do you call removing very common words such as the, is, and a?|stop word removal;stop words removal
-Which word can stop word removal wrongly delete and flip the sentiment of "This is not good"?|not;negation
-After stop word removal, "The cat is on the mat" becomes what?|cat mat
-Which technique cuts word endings using fixed rules?|stemming
-Which technique returns the dictionary version of a word?|lemmatization;lemmatisation
-The output of stemming may be a what, rather than a valid word?|non-word;non word;nonword;non-words
-Which technique turns "studies" into "studi"?|stemming
-Which technique turns "studies" into "study"?|lemmatization
-Which technique turns "better" into "good"?|lemmatization
-Which technique turns "was" into "be"?|lemmatization
-Which technique turns "quickly" into "quickli"?|stemming
-Which technique turns "beautiful" into "beauti"?|stemming
-Which is faster: stemming or lemmatization?|stemming
-Which is more accurate: stemming or lemmatization?|lemmatization
-What is the lemmatized form of "children"?|child
-What is the lemmatized form of "parks"?|park
-Which preprocessing technique is listed first in the reviewer?|tokenization
-A smaller, simpler vocabulary improves training what?|efficiency
-Checking the model on what kind of data is the goal of evaluation?|unseen data;new data;new unseen data;unseen
-Which metric tells how often the model is correct overall?|accuracy
-Which metric tells how much of what the model flagged as positive was truly positive?|precision
-Which metric tells how many of all truly positive cases the model found?|recall
-Which single score balances precision and recall?|f1-score;f1;f1 score
-What is the minimum accuracy the reviewer requires to move on to the next step?|90%;90;90 percent
-A model that always says "not spam" scores 95% when only 5% of emails are spam. This shows accuracy alone can be what?|misleading
-Of the emails flagged as spam, how many were really spam. Which metric is this?|precision
-Of all real spam emails, how many were caught. Which metric is this?|recall
-If a model scores below 90%, the team goes back to improve the data, preprocessing, features, or the what?|model
-Which metric is most useful when both precision and recall matter?|f1-score;f1;f1 score
-Which metric can be misleading when only 5% of emails are spam?|accuracy
-What do you call making the trained model available for real use?|deployment
-Connecting the model to a website chatbot or mobile app is which pipeline step?|deployment
-Deployment considerations include response time, handling many users, cost, and what?|security
-What do you call continuously tracking the model's performance after deployment?|monitoring
-Language changes over time, so deployed models become what?|outdated
-New slang makes a sentiment model less accurate. What should the team do with the model on fresh data?|retrain;retraining
-User feedback and error logs reveal what, so the model can be updated?|failures;errors;mistakes
-What is the example task in the end-to-end worked example: labeling reviews as positive or negative?|sentiment analysis
-Which level of language processing applies only to spoken language?|phonological;phonological level
-Text-only NLP systems, such as a text chatbot, usually start from which level?|morphological;morphological level
-In the mnemonic "Pink Monkeys Love Sweet Strawberries During Picnics", what does "D" stand for?|discourse`;
+const RAW=`Level of language processing that studies speech sounds: how they are produced, organized, and pronounced.|phonological;phonological level
+The first level of language processing, used by any system that listens to or produces speech.|phonological;phonological level
+The only level that applies to spoken rather than written language.|phonological;phonological level
+The smallest unit of sound in a spoken language that can change the meaning of a word.|phoneme;phonemes
+"bat" and "pat" differ by exactly one of these.|phoneme;phonemes
+The word "cat" has three of these: /k/ /æ/ /t/.|phonemes;phoneme
+Speech recognition models turn audio into these before turning them into words.|phonemes;phoneme
+A written representation of how a word is actually pronounced.|phonetic transcription
+It is needed because English spelling does not always match pronunciation, e.g., "knight" → /naɪt/.|phonetic transcription
+Pronunciation dictionaries and language-learning apps rely on this.|phonetic transcription
+The rhythm, stress, intonation, pitch, and speed of speech.|prosody
+It carries emotion and sentence type beyond the words themselves, e.g., rising pitch turns a statement into a question.|prosody
+Call centers use this feature of speech to detect emotion in callers.|prosody
+Natural-sounding voice assistants need this to sound human.|prosody
+Level that studies the internal structure of words.|morphological;morphological level
+Level at which text-only NLP systems usually start.|morphological;morphological level
+Level that helps a system see run, runs, running, and runner as variations of one idea.|morphological;morphological level
+The smallest unit of a language that carries meaning or grammatical function.|morpheme;morphemes
+"un-", "break", and "-able" are each one of these.|morpheme;morphemes
+It is not the same as a syllable.|morpheme;morphemes
+"unbreakable" has three of these.|morphemes;morpheme
+Changing a word's form to show grammatical information such as tense, without changing its core meaning.|inflection
+walk → walked is an example of this.|inflection
+cat → cats and big → bigger are examples of this.|inflection
+Lemmatization undoes this by mapping forms back to one dictionary form.|inflection
+Creating a new word, often with a new meaning, by adding prefixes or suffixes.|derivation
+happy → happiness and teach → teacher are examples of this.|derivation
+kind → unkind (opposite meaning) is an example of this.|derivation
+Of the two, this one usually changes the core meaning of a word.|derivation
+Level that deals with individual words and what they mean.|lexical;lexical level
+Level that some textbooks group under semantics.|lexical;lexical level
+The study of the meaning of individual words and the relationships between words.|lexical semantics
+It explains why "bank" can mean a money institution or a river edge.|lexical semantics
+Words that share the same meaning, such as big and large.|synonyms;synonym
+Search engines use these to match "car" with "automobile".|synonyms;synonym
+Words with opposite meanings, such as hot and cold.|antonyms;antonym
+A reference tool that lists words with similar meanings.|thesaurus;thesauri
+Dictionaries and this tool are applications of lexical semantics.|thesaurus;thesauri
+Level that studies how words are arranged into phrases and sentences following grammar rules.|syntactic;syntactic level
+Level at which "The dog bites the man" and "The man bites the dog" differ.|syntactic;syntactic level
+Level used by grammar checkers.|syntactic;syntactic level
+Analyzing the grammatical structure of a sentence and producing a tree.|parsing;syntactic parsing
+Grammar checkers, machine translation, and information extraction rely on this.|parsing;syntactic parsing
+Deciding whether "with the telescope" belongs to "the man" or to "saw" requires this.|parsing;syntactic parsing
+A basic word-order pattern: the doer comes first, then the action, then the receiver.|svo;subject verb object;subject-verb-object
+The word order English mostly follows.|svo;subject verb object;subject-verb-object
+Filipino is typically verb-first, unlike this pattern.|svo;subject verb object;subject-verb-object
+"Maria (S) eats (V) rice (O)" follows this pattern.|svo;subject verb object;subject-verb-object
+The principle that groups of words function together as a single grammatical unit.|constituency
+It breaks a sentence into nested groups, shown as [ [The cat] [chased [the mouse]] ].|constituency
+It is used to pick out word groups such as "the red car".|constituency
+A group of words that functions as a single grammatical unit within a sentence.|constituent;constituents
+The grammatical relationship between words in which one word governs or describes another.|dependency
+It is used to find which adjective describes which noun in reviews.|dependency
+It focuses on word-to-word head–dependent links rather than nested phrases.|dependency
+In a dependency, the word that governs or describes another word.|head;governor
+In "The cat chased the mouse", "chased" plays this role.|head;governor
+In a dependency, the word that is governed by or modifies another word.|dependent;modifier
+In "The cat chased the mouse", "cat" and "mouse" are each one of these.|dependent;dependents
+In SVO, the part that tells who does the action.|subject
+In SVO, the part that tells who or what receives the action.|object
+In SVO, the part that is the action.|verb
+Level that determines what words and sentences actually mean, not just how they are built.|semantic;semantic level
+Level where "Colorless green ideas sleep furiously" fails despite perfect grammar.|semantic;semantic level
+Level where a model understands a word through its context.|semantic;semantic level
+Determining which meaning of an ambiguous word is intended, based on its surrounding context.|word sense disambiguation;wsd
+It separates "river bank" from the "bank" where you deposit a check.|word sense disambiguation;wsd
+It decides whether "bat" means the animal or the sports equipment.|word sense disambiguation;wsd
+Identifying the agent, the action, and the receiver in a sentence.|semantic role labeling;srl
+The task that answers "who did what to whom," and also when and where.|semantic role labeling;srl
+Under this task, roles stay the same in "Maria gave Juan a book" and "A book was given to Juan by Maria."|semantic role labeling;srl
+Finding and classifying names in text into categories such as person, organization, location, and date.|named entity recognition;ner
+It tags "Jose Rizal" as PERSON and "Calamba, Laguna" as LOCATION.|named entity recognition;ner
+Resume parsing and news tagging rely on this.|named entity recognition;ner
+This task struggles with "Washington", which may be a person, a place, or an organization.|named entity recognition;ner
+In semantic role labeling, the doer of the action.|agent
+In "Maria gave Juan a book," Maria has this role.|agent
+Level that goes beyond a single sentence to study how sentences form a meaningful text or conversation.|discourse;discourse level
+Level where the meaning of a sentence can depend on the sentences before it.|discourse;discourse level
+Level needed by multi-turn chatbots and summarizers to connect sentences.|discourse;discourse level
+The meaning-based, logical flow of a text.|coherence
+It is missing in "Ana was hungry. The moon orbits the Earth."|coherence
+Automated essay scorers check whether sentences are logically related using this.|coherence
+Of the two, this is the logic in the meaning, while the other is the glue in the wording.|coherence
+The surface-level linguistic links, such as transition words and pronouns, that tie sentences together.|cohesion
+"Therefore" and "however" create this.|cohesion
+The "glue" in the wording of a text.|cohesion
+Writing assistants that suggest transition words improve this.|cohesion
+Determining which earlier word or phrase a pronoun points back to.|anaphoric resolution;anaphora resolution;coreference resolution
+It tells us that "She" means Ana in "Ana is tired. She went to bed."|anaphoric resolution;anaphora resolution;coreference resolution
+It decides what "it" refers to in "The trophy didn't fit in the suitcase because it was too big."|anaphoric resolution;anaphora resolution;coreference resolution
+"Maria told Ana that she won" is ambiguous for this task.|anaphoric resolution;anaphora resolution;coreference resolution
+The highest level of language processing, concerned with intended meaning in real-world context.|pragmatic;pragmatic level
+Level that looks at the speaker's intention, the situation, and shared knowledge beyond the literal words.|pragmatic;pragmatic level
+Level at which sarcasm detection and dialogue systems operate.|pragmatic;pragmatic level
+The idea that utterances perform actions such as requesting, promising, warning, or apologizing.|speech acts;speech act
+"Can you pass the salt?" is an example, because it is a request and not a question about ability.|speech acts;speech act
+"I promise to come" and "You're hired" are examples of this.|speech acts;speech act
+Chatbots use this to understand that "Book me a flight" means an action to perform.|speech acts;speech act
+"Pointing" words whose meaning depends on who says them, where, and when.|deixis;deictic words;deictic
+"I", "here", and "tomorrow" are examples of this.|deixis;deictic words;deictic
+"Remind me tomorrow" requires a voice assistant to resolve this.|deixis;deictic words;deictic
+These words are not the same as prepositions.|deixis;deictic words;deictic
+Interpreting the intended meaning of an utterance using the situation, tone, and background knowledge.|contextual understanding
+It lets a system know "It's cold in here" may mean "Please close the window."|contextual understanding
+It helps detect that "Great, another Monday!" is sarcasm.|contextual understanding
+The field of AI that enables computers to understand, interpret, generate, and respond to human language.|natural language processing;nlp
+Google Translate, voice assistants, spam filters, and autocorrect are everyday applications of this field.|natural language processing;nlp
+This field breaks language into levels because human language is complex and ambiguous.|natural language processing;nlp
+The step-by-step workflow for turning raw language data into a working, maintained NLP system.|nlp pipeline;pipeline
+It has 8 steps, from data gathering to monitoring.|nlp pipeline;pipeline
+Step 1: collecting textual data from websites, social media, surveys, emails, and public datasets.|data gathering;data gathering input
+This step is also labeled "Input" in the pipeline.|data gathering;data gathering input
+The step whose data determines what the model can learn.|data gathering;data gathering input
+The step where challenges like data quality, privacy, and bias first appear.|data gathering;data gathering input
+Step 2: removing noise, correcting spelling errors, and normalizing text.|text cleaning
+The step that handles misspellings, slang, and abbreviations.|text cleaning
+The step that turns "idk wat 2 do, pls hlp" into "I don't know what to do, please help".|text cleaning
+The step that removes HTML tags, URLs, and extra spaces.|text cleaning
+Step 3: preparing cleaned text so a model can learn from it efficiently.|text preprocessing;preprocessing
+The step that includes tokenization, lowercasing, stop word removal, normalization, and stemming or lemmatization.|text preprocessing;preprocessing
+The step that enhances accuracy, reduces noise, and improves training efficiency.|text preprocessing;preprocessing
+The step that comes right after text cleaning.|text preprocessing;preprocessing
+Step 4: turning preprocessed text into numbers the model can work with.|feature engineering
+The step where counting how often each word appears turns "I love NLP" into numbers.|feature engineering
+The step based on the idea that models work with numbers, not words.|feature engineering
+The step where better features lead to better learning.|feature engineering
+Step 5: training a model on prepared data so it learns patterns for predictions.|modeling
+The step of training a model on labeled reviews to tell positive from negative.|modeling
+The step that comes right before evaluation.|modeling
+Step 6: checking the model on new, unseen data using specific metrics.|evaluation
+The step that uses accuracy, precision, recall, and F1-score.|evaluation
+The step with a 90% accuracy passing rule in this reviewer.|evaluation
+The step that decides whether the model can move on to deployment.|evaluation
+Step 7: making the trained model available for real use.|deployment
+The step of connecting a model to a website chatbot, mobile app, or school system.|deployment
+The step with considerations like response time, handling many users, security, and cost.|deployment
+Step 8: continuously tracking a model's performance after deployment and updating or retraining it.|monitoring and model updating;monitoring;model updating
+The step needed because language changes over time and models become outdated.|monitoring and model updating;monitoring;model updating
+The step that uses user feedback and error logs to reveal failures.|monitoring and model updating;monitoring;model updating
+The last step of the pipeline.|monitoring and model updating;monitoring;model updating
+The step where new slang or trending topics trigger retraining.|monitoring and model updating;monitoring;model updating
+Data-gathering challenge summed up as "Garbage in, garbage out."|data quality
+Challenge whose problems include incomplete data, inconsistent formats, and noise and outliers.|data quality
+Reviews with missing ratings and dates in different formats show this challenge.|data quality
+Challenge about protecting people's information through encryption and anonymization.|data privacy and security;data privacy & security;data privacy;privacy
+Chat logs containing names, phone numbers, and addresses raise this challenge.|data privacy and security;data privacy & security;data privacy;privacy
+Challenge about who can access the data, limited to authorized people.|data accessibility
+Challenge whose issues include high costs and technical barriers.|data accessibility
+Medical or student records restricted to approved staff illustrate this challenge.|data accessibility
+Challenge in which data is too large to store or process and comes as text, images, audio, and video.|data volume and variety;data volume & variety
+Millions of tweets plus product photos and voice recordings illustrate this challenge.|data volume and variety;data volume & variety
+Challenge in which data must fairly represent the people and situations the model will serve.|bias and representativeness;bias & representativeness;bias
+A model trained mostly on formal English performing poorly on Taglish illustrates this challenge.|bias and representativeness;bias & representativeness;bias
+Challenge that can lead to demographic or gender bias in a model.|bias and representativeness;bias & representativeness;bias
+Removing personal and identifying information from data so people cannot be identified.|anonymization;anonymizing;anonymisation
+Along with encryption, this protects chat logs that contain names and phone numbers.|anonymization;anonymizing;anonymisation
+Philippine law that data gathering must comply with to protect personal information.|data privacy act of 2012;data privacy act;ra 10173;10173
+Also known as Republic Act 10173.|data privacy act of 2012;data privacy act;ra 10173;10173
+The principle that users get only the access they need.|principle of least privilege;least privilege
+A key idea in managing who can access data, so that people hold no more access than their job requires.|principle of least privilege;least privilege
+An access method that gives permissions based on a person's role.|role-based access control;rbac
+It is paired with the principle of least privilege to control data access.|role-based access control;rbac
+Data such as free text, images, and audio that is hard to handle.|unstructured data;unstructured
+Any part of the text that does not help the task, such as special characters, HTML tags, and URLs.|noise
+Removing this is a main job of text cleaning.|noise
+Numbers, punctuation, and emojis can count as this, but are sometimes useful for tasks like sentiment.|noise
+Converting text into a standard form so different versions of the same thing are treated the same.|normalization
+"gonna" → "going to" and "2moro" → "tomorrow" are examples of this.|normalization
+Without it, the model treats "color" and "colour" as two different words.|normalization
+"U.S.A." and "USA" are both mapped to one form by this.|normalization
+Splitting text into smaller pieces: paragraphs into sentences, and sentences into words.|tokenization
+The first preprocessing technique listed in the reviewer.|tokenization
+It turns "NLP is fun. It is useful." into [NLP, is, fun, ., It, is, useful, .].|tokenization
+A tool that stops at every period may wrongly split "Dr. Cruz" or "3.14" during this process.|tokenization
+The smaller pieces produced by splitting text, later mapped to numbers.|tokens;token
+Each word ID in the vocabulary corresponds to one of these.|tokens;token
+Converting all text to small letters so "Hello", "HELLO", and "hello" become one token.|lowercasing
+"The Cat Sat" → "the cat sat" is an example of this.|lowercasing
+It can lose meaning, such as "Apple" (company) vs "apple" (fruit).|lowercasing
+Removing very common words that add little meaning, such as the, is, a, an, of, in, and to.|stop word removal;stop words removal
+"The cat is on the mat" → "cat mat" is an example of this.|stop word removal;stop words removal
+It can delete "not" and flip the meaning of "This is not good".|stop word removal;stop words removal
+Very common words such as articles, prepositions, and auxiliary verbs that add little meaning.|stop words;stop word
+Reduces words to a base form by cutting off endings using fixed rules.|stemming
+It may produce non-words, such as studies → studi.|stemming
+It is faster but less accurate than lemmatization.|stemming
+quickly → quickli and beautiful → beauti are results of this.|stemming
+Reduces words to their valid dictionary form.|lemmatization;lemmatisation
+better → good and was → be are examples of this.|lemmatization;lemmatisation
+It is slower but more accurate than stemming.|lemmatization;lemmatisation
+The technique that always outputs a valid word.|lemmatization;lemmatisation
+Evaluation metric that tells how often the model is correct overall.|accuracy
+The metric that can mislead when a model always says "not spam" and scores 95%.|accuracy
+Of everything the model flagged as positive, how much was truly positive.|precision
+Of the emails flagged as spam, how many were really spam.|precision
+Of all the truly positive cases, how many the model found.|recall
+Of all the real spam emails, how many were caught.|recall
+A balance of precision and recall in one score.|f1-score;f1;f1 score
+The metric that is useful when both precision and recall matter.|f1-score;f1;f1 score`;
 const BANK=RAW.trim().split('\n').map(l=>{const i=l.lastIndexOf('|');return{q:l.slice(0,i).trim(),alts:l.slice(i+1).split(';').map(s=>s.trim())}});
 const PICK_N=50;
+const ALL=new Set();
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim().replace(/^(the|a|an) /,'');
 const lev=(a,b)=>{const m=a.length,n=b.length;let p=[...Array(n+1).keys()];for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]};
-const isOk=(inp,alts)=>{const n=norm(inp);if(!n)return false;return alts.some(x=>{const m=norm(x);if(n===m)return true;const t=m.length>=12?2:m.length>=6?1:0;return t>0&&lev(n,m)<=t})};
+const isOk=(inp,alts)=>{const n=norm(inp);if(!n)return false;const mine=alts.map(norm);if(!mine.includes(n)&&ALL.has(n))return false;return alts.some(x=>{const m=norm(x);if(n===m)return true;const t=m.length>=12?2:m.length>=6?1:0;return t>0&&lev(n,m)<=t})};
+BANK.forEach(b=>b.alts.forEach(x=>ALL.add(norm(x))));
 const app=document.getElementById('idApp');
 let S={list:[],i:0,res:[]};
 
 function intro(){
   app.innerHTML=`<div class="qbox"><h3 style="margin-top:0">Identification Quiz</h3>
-  <p>The bank has <b>${BANK.length} items</b>, all identification. Each attempt randomly draws <b>${PICK_N}</b> of them in a new order.</p>
-  <ul><li>Type your answer in the box and press <b>Enter</b> or <b>Check answer</b>.</li>
+  <p>The bank has <b>${BANK.length} items</b>, all identification of key terms. Each clue describes a term from the reviewer (for example prosody, morpheme, or the morphological level), and you type the term. Each attempt randomly draws <b>${PICK_N}</b> clues, with no term repeated.</p>
+  <ul><li>Type the term in the box and press <b>Enter</b> or <b>Check answer</b>.</li>
   <li>Case, punctuation, a leading “the/a/an,” and small typos are ignored.</li>
   <li>You get the correct answer right after each item, and a list of missed items at the end.</li></ul>
   <button class="btn" id="idStart">Start Quiz</button></div>`;
   document.getElementById('idStart').onclick=start;
 }
-function start(){S={list:shuf(BANK).slice(0,PICK_N),i:0,res:[]};render();window.scrollTo(0,0)}
+function pick(){const seen=new Set(),out=[],rest=[];shuf(BANK).forEach(b=>{const k=norm(b.alts[0]);if(seen.has(k))rest.push(b);else{seen.add(k);out.push(b)}});return shuf(out.concat(rest).slice(0,PICK_N))}
+function start(){S={list:pick(),i:0,res:[]};render();window.scrollTo(0,0)}
 function render(){
   const q=S.list[S.i],n=S.list.length;
   app.innerHTML=`<div class="qbox"><div class="qmeta"><span>Question <b>${S.i+1}</b> of ${n}</span><span class="badge">Identification</span></div>
   <div class="bar"><i style="width:${(S.i/n)*100}%"></i></div>
-  <p class="qtext">${esc(q.q)}</p>
-  <input class="idin" id="idIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer here">
+  <p class="hint" style="margin-bottom:4px">Identify the term described.</p><p class="qtext">${esc(q.q)}</p>
+  <input class="idin" id="idIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the term here">
   <div id="idFb"><button class="btn" id="idChk">Check answer</button></div></div>`;
   const inp=document.getElementById('idIn');inp.focus();
   const check=()=>{
